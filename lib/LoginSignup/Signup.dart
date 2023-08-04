@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:velocito/LoginSignup/Login.dart';
+import 'package:velocito/LoginSignup/SignupOTP.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -150,7 +151,10 @@ class _SignupState extends State<Signup> {
       child: MaterialButton(
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
-        onPressed: () async {},
+        onPressed: () async {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SignupOTP()));
+        },
         child: Text(
           "Next >",
           textAlign: TextAlign.center,
