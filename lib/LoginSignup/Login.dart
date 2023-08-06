@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
+import 'package:velocito/pages/HomeScreen.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -87,7 +88,10 @@ class _LoginState extends State<Login> {
       child: MaterialButton(
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
-        onPressed: () async {},
+        onPressed: () async {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HomeScreen()));
+        },
         child: Text(
           "Next >",
           textAlign: TextAlign.center,
