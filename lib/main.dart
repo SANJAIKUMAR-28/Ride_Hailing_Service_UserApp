@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
+import 'package:velocito/splash.dart';
 
 void main() {
   runApp(const MyApp());

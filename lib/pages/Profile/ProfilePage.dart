@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
+import 'package:velocito/pages/Profile/RideHistory.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -115,7 +117,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => PaymentOption()));
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -183,7 +188,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => RideHistory()));
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -236,7 +244,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         color: Colors.grey,
                                         size: 20,
                                       ),
-                                      onTap: () {},
+                                      onTap: () {
+
+                                      },
                                     )
                                   ],
                                 ),
