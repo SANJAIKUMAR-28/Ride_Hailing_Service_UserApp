@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
 import 'package:velocito/pages/HomeScreen.dart';
 
@@ -185,7 +187,9 @@ class _LoginState extends State<Login> {
                           height: 25,
                           width: 25,
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          SignInWithGoogle();
+                        },
                       ),
                       SizedBox(
                         width: 20,
@@ -244,5 +248,15 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+  SignInWithGoogle() async{
+    GoogleSignInAccount? googleUser= await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth= await googleUser?.authentication;
+    AuthCredential credential=GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
   }
 }

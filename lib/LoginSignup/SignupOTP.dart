@@ -3,6 +3,7 @@ import 'package:email_otp/email_otp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
 import 'package:line_icons/line_icons.dart';
@@ -15,19 +16,19 @@ class SignupOTP extends StatefulWidget {
   final String password;
   final String name;
   final String phn;
+  final EmailOTP myauth;
   const SignupOTP(
       {super.key,
       required this.mail,
       required this.password,
       required this.name,
-      required this.phn});
+      required this.phn, required this.myauth});
 
   @override
   State<SignupOTP> createState() => _SignupOTPState();
 }
 
 class _SignupOTPState extends State<SignupOTP> {
-  EmailOTP myauth = EmailOTP();
   final _auth = FirebaseAuth.instance;
   final first = new TextEditingController();
   final second = new TextEditingController();
@@ -44,6 +45,8 @@ class _SignupOTPState extends State<SignupOTP> {
   late FocusNode sixthNode;
   late Timer _timer;
   int _start = 30;
+
+
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
@@ -65,26 +68,19 @@ class _SignupOTPState extends State<SignupOTP> {
   @override
   void initState() {
     super.initState();
-
     firstNode = FocusNode();
     secondNode = FocusNode();
     thirdNode = FocusNode();
     fourthNode = FocusNode();
     fifthNode = FocusNode();
     sixthNode = FocusNode();
+
     startTimer();
-    myauth.setConfig(
-        appEmail: "skasanjai@gmail.com",
-        appName: "Velocito",
-        userEmail: widget.mail,
-        otpLength: 6,
-        otpType: OTPType.digitsOnly);
   }
 
   @override
   void dispose() {
     _timer.cancel();
-
     super.dispose();
   }
 
@@ -270,7 +266,7 @@ class _SignupOTPState extends State<SignupOTP> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
-          if (await myauth.verifyOTP(
+          if (await widget.myauth.verifyOTP(
                   otp: otpmerge(first.text, second.text, third.text,
                       fourth.text, fifth.text, sixth.text)) ==
               true) {
@@ -475,4 +471,5 @@ class _SignupOTPState extends State<SignupOTP> {
     Navigator.pushAndRemoveUntil((context),
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
+
 }

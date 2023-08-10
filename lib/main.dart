@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
+import 'package:velocito/pages/HomeScreen.dart';
 import 'package:velocito/splash.dart';
 
 Future<void> main() async {
@@ -38,7 +40,23 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: Login(),
+      home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if(snapshot.hasError){
+              return Text('Something went wrong');
+            }
+            if(snapshot.connectionState==ConnectionState.active){
+              if(snapshot.data==null){
+                return Login();
+              }
+              else{
+                return HomeScreen();
+              }
+            }
+            return Center(child: CircularProgressIndicator(),);
+          }
+      ),
     );
   }
 }

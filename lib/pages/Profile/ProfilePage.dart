@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 import 'package:velocito/pages/Profile/RideHistory.dart';
@@ -397,7 +399,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onPressed: () {},
+                                onPressed: () async {
+                                  await GoogleSignIn().signOut();
+                                  FirebaseAuth.instance.signOut();
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,

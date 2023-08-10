@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/SignupOTP.dart';
 import 'package:email_otp/email_otp.dart';
@@ -160,7 +161,33 @@ class _SignupState extends State<Signup> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
-          signUp(emailEditingController.text, passwordEditingController.text);
+          if(_formkey.currentState!.validate()) {
+            myauth.setConfig(
+                appEmail: "teamrogue2025@gmail.com",
+                appName: "Velocito",
+                userEmail: emailEditingController.text,
+                otpLength: 6,
+                otpType: OTPType.digitsOnly);
+            if (await myauth.sendOTP() == true) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(
+                content: Text("OTP has been sent"),
+              ));
+              Navigator.pushAndRemoveUntil(
+                  (context), MaterialPageRoute(builder: (context) =>
+                  SignupOTP(mail: emailEditingController.text.trim(),
+                    password: passwordEditingController.text,
+                    name: nameEditingController.text.trim(),
+                    phn: phoneEditingController.text.trim(),
+                    myauth: myauth,)),
+                      (route) => false);
+            } else {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(
+                content: Text("Oops, OTP send failed"),
+              ));
+            }
+          }
         },
         child: Text(
           "Next >",
@@ -244,7 +271,9 @@ class _SignupState extends State<Signup> {
                           height: 25,
                           width: 25,
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          SignInWithGoogle();
+                        },
                       ),
                       SizedBox(
                         width: 20,
@@ -302,16 +331,15 @@ class _SignupState extends State<Signup> {
       ),
     );
   }
-  void signUp(String email,String password) async
-  {
-    if(_formkey.currentState!.validate())
-    {
 
-        Navigator.pushAndRemoveUntil(
-            (context), MaterialPageRoute(builder: (context) => SignupOTP(mail:emailEditingController.text.trim(), password: passwordEditingController.text, name: nameEditingController.text.trim(), phn: phoneEditingController.text.trim(),)),
-                (route) => false);
-      }
-    }
-
-
+  SignInWithGoogle() async{
+    GoogleSignInAccount? googleUser= await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth= await googleUser?.authentication;
+    AuthCredential credential=GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
+  }
 }
