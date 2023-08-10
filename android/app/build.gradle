@@ -21,6 +21,8 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+apply plugin:  'com.google.gms.google-services'
+
 
 android {
     namespace "com.example.velocito"
@@ -37,7 +39,7 @@ android {
         applicationId "com.example.velocito"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -54,4 +56,9 @@ android {
 
 flutter {
     source '../..'
+}
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:31.0.1')
+    implementation 'com.google.firebase:firebase-analytics'
+
 }

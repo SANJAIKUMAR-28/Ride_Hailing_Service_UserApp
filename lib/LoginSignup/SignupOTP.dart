@@ -1,17 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_otp/email_otp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
 import 'package:line_icons/line_icons.dart';
 import 'dart:async';
 
+import '../Models/user_model.dart';
+
 class SignupOTP extends StatefulWidget {
-  const SignupOTP({super.key});
+  final String mail;
+  final String password;
+  final String name;
+  final String phn;
+  const SignupOTP(
+      {super.key,
+      required this.mail,
+      required this.password,
+      required this.name,
+      required this.phn});
 
   @override
   State<SignupOTP> createState() => _SignupOTPState();
 }
 
 class _SignupOTPState extends State<SignupOTP> {
+  EmailOTP myauth = EmailOTP();
+  final _auth = FirebaseAuth.instance;
   final first = new TextEditingController();
   final second = new TextEditingController();
   final third = new TextEditingController();
@@ -27,7 +44,6 @@ class _SignupOTPState extends State<SignupOTP> {
   late FocusNode sixthNode;
   late Timer _timer;
   int _start = 30;
-
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
@@ -57,11 +73,18 @@ class _SignupOTPState extends State<SignupOTP> {
     fifthNode = FocusNode();
     sixthNode = FocusNode();
     startTimer();
+    myauth.setConfig(
+        appEmail: "skasanjai@gmail.com",
+        appName: "Velocito",
+        userEmail: widget.mail,
+        otpLength: 6,
+        otpType: OTPType.digitsOnly);
   }
 
   @override
   void dispose() {
     _timer.cancel();
+
     super.dispose();
   }
 
@@ -246,7 +269,19 @@ class _SignupOTPState extends State<SignupOTP> {
       child: MaterialButton(
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
-        onPressed: () async {},
+        onPressed: () async {
+          if (await myauth.verifyOTP(
+                  otp: otpmerge(first.text, second.text, third.text,
+                      fourth.text, fifth.text, sixth.text)) ==
+              true) {
+            signUp(widget.mail, widget.password);
+            Fluttertoast.showToast(
+              msg: 'OTP Verified and Account created Successfully',
+            );
+          } else {
+            Fluttertoast.showToast(msg: 'Invalid OTP ! !');
+          }
+        },
         child: Text(
           "Verify",
           textAlign: TextAlign.center,
@@ -287,7 +322,7 @@ class _SignupOTPState extends State<SignupOTP> {
                     text: 'Please enter the 6-digit code sent to your email ',
                     style: TextStyle(fontFamily: 'Arimo')),
                 TextSpan(
-                    text: 'skasanjai@gmail.com',
+                    text: '${widget.mail}',
                     style: TextStyle(
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.bold,
@@ -393,8 +428,51 @@ class _SignupOTPState extends State<SignupOTP> {
               context, MaterialPageRoute(builder: (context) => Signup()));
         },
         backgroundColor: Colors.black,
-        child: Icon(LineIcons.angleLeft,color: Colors.white,),
+        child: Icon(
+          LineIcons.angleLeft,
+          color: Colors.white,
+        ),
       ),
     );
+  }
+
+  String otpmerge(String firstNum, String secondNum, String thirdNum,
+      String fourthNum, String fifthNum, String sixthNum) {
+    String otp =
+        firstNum + secondNum + thirdNum + fourthNum + fifthNum + sixthNum;
+    print(otp);
+    return otp;
+  }
+
+  void signUp(String email, String password) async {
+    if (_formkey.currentState!.validate()) {
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => {passDetailsToFirestore()})
+          .catchError((e) {
+        Fluttertoast.showToast(msg: e.message);
+      });
+    }
+  }
+
+  passDetailsToFirestore() async {
+    //calling firestore
+    //calling user model
+    //calling values
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+    UserModel userModel = UserModel();
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.name = widget.name;
+    userModel.phoneno = widget.phn;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfully !!");
+    Navigator.pushAndRemoveUntil((context),
+        MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
+import 'package:velocito/pages/HomePage.dart';
 import 'dart:ui';
 
 import 'package:velocito/pages/Profile/ProfilePage.dart';
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const TextStyle _style =
       TextStyle(fontFamily: 'Arimo', fontSize: 11, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    ProfilePage(),
+    HomePage(),
     PaymentOption(),
     ProfilePage(),
     ProfilePage(),

@@ -58,7 +58,7 @@ class _RideHistoryState extends State<RideHistory> {
                       Text(
                         '8 JUNE 2023, 18:45',
                         style: TextStyle(
-                            fontFamily: 'Arimo', fontWeight: FontWeight.w600),
+                            fontFamily: 'Arimo', fontWeight: FontWeight.w600,color: Color.fromRGBO(62, 73 ,88, 1.0)),
                       ),
                       ('${sts}' == 'COMPLETED')
                           ? Text('${sts}',

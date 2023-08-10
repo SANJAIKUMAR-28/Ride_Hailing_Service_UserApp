@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/SignupOTP.dart';
+import 'package:email_otp/email_otp.dart';
+
+import '../Models/user_model.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -10,6 +16,8 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  final _auth=FirebaseAuth.instance;
+  EmailOTP myauth=EmailOTP();
   final _formkey = GlobalKey<FormState>();
   final nameEditingController = new TextEditingController();
   final emailEditingController = new TextEditingController();
@@ -152,8 +160,7 @@ class _SignupState extends State<Signup> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SignupOTP()));
+          signUp(emailEditingController.text, passwordEditingController.text);
         },
         child: Text(
           "Next >",
@@ -295,4 +302,16 @@ class _SignupState extends State<Signup> {
       ),
     );
   }
+  void signUp(String email,String password) async
+  {
+    if(_formkey.currentState!.validate())
+    {
+
+        Navigator.pushAndRemoveUntil(
+            (context), MaterialPageRoute(builder: (context) => SignupOTP(mail:emailEditingController.text.trim(), password: passwordEditingController.text, name: nameEditingController.text.trim(), phn: phoneEditingController.text.trim(),)),
+                (route) => false);
+      }
+    }
+
+
 }
