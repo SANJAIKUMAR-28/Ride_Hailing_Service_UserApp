@@ -47,6 +47,7 @@ dependencies:
   fluttertoast: ^8.2.2
   email_otp: ^2.0.1
   package_info_plus: ^4.1.0
+  flutter_phone_direct_caller: ^2.1.1
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +84,11 @@ flutter:
     - assets/gpay.png
     - assets/card.png
     - assets/cash.png
+    - assets/auto.png
+    - assets/bike.png
+    - assets/taxi4.png
+    - assets/taxi7.png
+    - assets/map.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

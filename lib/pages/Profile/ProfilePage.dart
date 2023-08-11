@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
+import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
 import 'package:velocito/pages/Profile/RideHistory.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../Models/user_model.dart';
@@ -287,7 +289,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onPressed: () {},
+                                onPressed: () async {
+                                  await FlutterPhoneDirectCaller.callNumber('${loggedInUser.phoneno}');
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -557,7 +561,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: MaterialButton(
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => VehicleSelection()));
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
+import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
 import 'package:velocito/pages/HomePage.dart';
 import 'dart:ui';
 
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     PaymentOption(),
-    ProfilePage(),
+    VehicleSelection(),
     ProfilePage(),
   ];
 
