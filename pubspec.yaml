@@ -89,6 +89,7 @@ flutter:
     - assets/taxi4.png
     - assets/taxi7.png
     - assets/map.png
+    - assets/driver.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
