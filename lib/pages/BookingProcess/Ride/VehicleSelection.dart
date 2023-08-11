@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/Ride/RideOptions.dart';
 
 class VehicleSelection extends StatefulWidget {
   const VehicleSelection({super.key});
@@ -58,25 +59,25 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          vehicle('assets/auto.png','VC Auto','80.76','0.67 km'),
+                          vehicle('assets/auto.png','VC Auto','80.76','0.67 km','3'),
                           Divider(
                             indent: 10,
                             endIndent: 10,
                             thickness: 0.5,
                           ),
-                          vehicle('assets/bike.png','VC Bike','97.98','0.79 km'),
+                          vehicle('assets/bike.png','VC Bike','97.98','0.79 km','1'),
                           Divider(
                             indent: 10,
                             endIndent: 10,
                             thickness: 0.5,
                           ),
-                          vehicle('assets/taxi4.png','VC Taxi 4 seats','104.76','0.5 km'),
+                          vehicle('assets/taxi4.png','VC Taxi 4 seats','104.76','0.5 km','4'),
                           Divider(
                             indent: 10,
                             endIndent: 10,
                             thickness: 0.5,
                           ),
-                          vehicle('assets/taxi7.png','VC Taxi 7 seats','156.45','1.67 km'),
+                          vehicle('assets/taxi7.png','VC Taxi 7 seats','156.45','1.67 km','7'),
                           Divider(
                             indent: 10,
                             endIndent: 10,
@@ -92,15 +93,20 @@ class _VehicleSelectionState extends State<VehicleSelection> {
         ]));
   }
 
-  Material vehicle(String asset,String name,String price,String dist){
+  Material vehicle(String asset,String name,String price,String dist,String seats){
     return Material(
+
         elevation: 0,
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
         child: MaterialButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          splashColor: Colors.black.withOpacity(0.2),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3',)));
+          },
           child: Row(
               mainAxisAlignment:
               MainAxisAlignment.spaceBetween,

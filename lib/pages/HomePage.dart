@@ -17,8 +17,8 @@ class _HomePageState extends State<HomePage> {
 
   void initState() {
     super.initState();
-    _location();
-  //
+    //_location();
+
   }
 
   void getLocation() async {
