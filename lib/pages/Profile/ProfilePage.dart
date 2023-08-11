@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 import 'package:velocito/pages/Profile/RideHistory.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import '../../Models/user_model.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,6 +17,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Row(children: [
+                             Row(children: [
                               CircleAvatar(
                                 radius: 30,
                                 backgroundColor: Colors.white,
@@ -65,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Sanjai kumar',
+                                    '${loggedInUser.name}',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Arimo',
@@ -75,7 +93,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(
                                     height: 3,
                                   ),
-                                  Text('sksanjai',
+                                  (loggedInUser.phoneno!=null)?
+                                  Text('${loggedInUser.phoneno}',
+                                      style: TextStyle(
+                                          fontFamily: 'Arimo',
+                                          color: Color.fromRGBO(
+                                              215, 215, 215, 1.0),
+                                          fontSize: 12)):Text('Add mobile number',
                                       style: TextStyle(
                                           fontFamily: 'Arimo',
                                           color: Color.fromRGBO(
@@ -134,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         backgroundColor:
                                             Color.fromRGBO(255, 51, 51, 0.03),
                                         child: Icon(
-                                          Icons.wallet,
+                                          LineIcons.creditCard,
                                           color:
                                               Color.fromRGBO(255, 51, 51, 0.8),
                                           size: 25,
@@ -150,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'My wallet',
+                                            'My cards',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w900,
                                                 fontFamily: 'Arimo',
@@ -160,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           SizedBox(
                                             height: 3,
                                           ),
-                                          Text('Make changes to your wallet',
+                                          Text('Make changes to your cards',
                                               style: TextStyle(
                                                   fontFamily: 'Arimo',
                                                   color: Color.fromRGBO(
@@ -400,8 +424,47 @@ class _ProfilePageState extends State<ProfilePage> {
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onPressed: () async {
-                                  await GoogleSignIn().signOut();
-                                  FirebaseAuth.instance.signOut();
+                                  showDialog(context: context, builder: (context) {
+                                    return AlertDialog(
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      title: Text("Log out", style: TextStyle(
+                                          fontFamily: 'Arimo',
+                                          color: Color.fromRGBO(255, 51, 51, 0.8),
+                                          fontWeight: FontWeight.bold)),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(
+                                          children: const<Widget>[
+                                            Text(
+                                                "Are you sure want to sign out?",
+                                                style: TextStyle(
+                                                    fontFamily: 'Arimo')),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                            child: const Text('No', style: TextStyle(
+                                                fontFamily: 'Arimo',
+                                                color: Color.fromRGBO(255, 51, 51, 0.8),
+                                                fontWeight: FontWeight.bold))),
+                                        TextButton(onPressed: () async {
+                                          await GoogleSignIn().signOut();
+                                          FirebaseAuth.instance.signOut();
+                                          Navigator.of(context).pop();
+                                          Fluttertoast.showToast(msg: "Signed out");
+                                        },
+                                            child: const Text('Yes', style: TextStyle(
+                                                fontFamily: 'Arimo',
+                                                color:Color.fromRGBO(255, 51, 51, 0.8),
+                                                fontWeight: FontWeight.bold)))
+                                      ],
+                                    );
+
+                                  });
+
                                 },
                                 child: Row(
                                   mainAxisAlignment:

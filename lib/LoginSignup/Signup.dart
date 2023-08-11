@@ -93,7 +93,7 @@ class _SignupState extends State<Signup> {
           autofocus: false,
           controller: phoneEditingController,
           style: TextStyle(fontFamily: 'Arimo'),
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.phone,
           validator: (value) {
             if (value!.isEmpty) {
               return ("Enter your mobile.no");
@@ -123,6 +123,7 @@ class _SignupState extends State<Signup> {
         child: TextFormField(
           autofocus: false,
           controller: passwordEditingController,
+
           style: TextStyle(fontFamily: 'Arimo'),
           obscureText: _isHidden,
           validator: (value) {
@@ -340,6 +341,17 @@ class _SignupState extends State<Signup> {
       idToken: googleAuth?.idToken,
     );
     UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+    UserModel userModel = UserModel();
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.name = user.displayName;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
     print(userCredential.user?.displayName);
   }
 }

@@ -46,6 +46,7 @@ dependencies:
   google_sign_in: ^6.1.4
   fluttertoast: ^8.2.2
   email_otp: ^2.0.1
+  package_info_plus: ^4.1.0
 
 dev_dependencies:
   flutter_test:

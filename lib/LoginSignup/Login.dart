@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
 import 'package:velocito/pages/HomeScreen.dart';
@@ -15,6 +16,8 @@ class _LoginState extends State<Login> {
   final _formkey = GlobalKey<FormState>();
   final emailEditingController = new TextEditingController();
   final passwordEditingController = new TextEditingController();
+  bool loading = false;
+  final _auth=FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     final emailField = Material(
@@ -91,10 +94,9 @@ class _LoginState extends State<Login> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HomeScreen()));
+          signIn(emailEditingController.text, passwordEditingController.text);
         },
-        child: Text(
+        child:  loading? SizedBox( height:22,width: 22,child:CircularProgressIndicator(color: Colors.white,)):Text(
           "Next >",
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -258,5 +260,27 @@ class _LoginState extends State<Login> {
     );
     UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
     print(userCredential.user?.displayName);
+  }
+  void signIn(String email,String password) async
+  {
+    setState(() {
+      loading = true;
+    });
+    if (_formkey.currentState!.validate()) {
+      await _auth.signInWithEmailAndPassword(
+          email: email.trim(), password: password)
+          .then((uid) =>
+      {
+        Fluttertoast.showToast(msg: "Login successful"),
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomeScreen())),
+
+      }).catchError((e) {
+        Fluttertoast.showToast(msg: e!.message);
+        setState(() {
+          loading = false;
+        });
+      });
+    }
   }
 }
