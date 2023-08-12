@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/CancellationPage.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 
 class DriverDetails extends StatefulWidget {
@@ -57,7 +58,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                         topLeft: Radius.circular(20)),
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20,10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -158,7 +159,8 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   Colors.white,
                                   child: InkWell(
                                     onTap: (){
-
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) => CancellationPage()));
                                     },
                                     child:Icon(
                                     LineIcons.times,
@@ -210,93 +212,98 @@ class _DriverDetailsState extends State<DriverDetails> {
       child: Material(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
-        elevation: 2.0,
-        child: SizedBox(
-          height: 150,
-          child: Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Color.fromRGBO(151, 173, 182, 0.2)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SizedBox(
+            height: 150,
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
 
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '18:45',
-                              style: TextStyle(
-                                fontFamily: 'Arimo',
-                              ),
-                            ),
-                            Text('19:00',
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '18:45',
                                 style: TextStyle(
                                   fontFamily: 'Arimo',
-                                )),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Container(
-                        height: 90,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(
-                              Icons.circle,
-                              color: Color.fromRGBO(255, 51, 51, 0.8),
-                              size: 10,
-                            ),
-                            Container(
-                              height: 60,
-                              child: VerticalDivider(
-                                color: Colors.black54,
-                                thickness: 2,
-                                indent: 2,
+                                ),
                               ),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              size: 20,
-                              color: Colors.black,
-                            ),
-                          ],
+                              Text('19:00',
+                                  style: TextStyle(
+                                    fontFamily: 'Arimo',
+                                  )),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Flexible(
-                          child: Container(
-                            height: 100,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '59/Amman Street,Tirupur,641603',
-                                  style: TextStyle(
-                                      fontFamily: 'Arimo', color: Colors.grey),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                          height: 90,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: Color.fromRGBO(255, 51, 51, 0.8),
+                                size: 10,
+                              ),
+                              Container(
+                                height: 60,
+                                child: VerticalDivider(
+                                  color: Colors.black54,
+                                  thickness: 2,
+                                  indent: 2,
                                 ),
-                                Text(
-                                  'Bannari Amman Institute of Technology,Sathy',
-                                  style: TextStyle(
-                                      fontFamily: 'Arimo', color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          )),
-                    ],
+                              ),
+                              Icon(
+                                Icons.arrow_drop_down,
+                                size: 20,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Flexible(
+                            child: Container(
+                              height: 100,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '59/Amman Street,Tirupur,641603',
+                                    style: TextStyle(
+                                        fontFamily: 'Arimo', color: Colors.grey),
+                                  ),
+                                  Text(
+                                    'Bannari Amman Institute of Technology,Sathy',
+                                    style: TextStyle(
+                                        fontFamily: 'Arimo', color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
