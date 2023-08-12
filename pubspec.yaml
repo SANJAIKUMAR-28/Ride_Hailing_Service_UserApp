@@ -90,6 +90,11 @@ flutter:
     - assets/taxi7.png
     - assets/map.png
     - assets/driver.png
+    - assets/map1.png
+    - assets/homecar.png
+    - assets/ridecar.png
+    - assets/intercitycar.png
+    - assets/officecar.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

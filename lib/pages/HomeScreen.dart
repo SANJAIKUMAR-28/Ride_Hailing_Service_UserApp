@@ -33,9 +33,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
         key: _key,
         body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-        bottomNavigationBar: Container(
+        bottomNavigationBar:  Material(
+          borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10)),
+clipBehavior: Clip.antiAlias,
+    child:Container(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: GNav(
                 tabBackgroundColor: Color.fromRGBO(245, 245, 255, 1.0),
                 gap: 5,
@@ -69,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }),
           ),
+    )
         ));
   }
 }

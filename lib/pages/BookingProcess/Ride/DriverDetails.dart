@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 
 class DriverDetails extends StatefulWidget {
   const DriverDetails({super.key});
@@ -37,7 +38,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.vertical,
                 child: Column(
-                  children: [Image.asset('assets/map.png')],
+                  children: [
+                    Image.asset('assets/map.png')
+                  ],
                 ),
               ),
             ),
@@ -96,14 +99,15 @@ class _DriverDetailsState extends State<DriverDetails> {
                           Padding(
                             padding: const EdgeInsets.only(left: 30,right: 30),
                             child: Material(
-                              borderRadius: BorderRadius.circular(10),
+                              elevation: 2,
+                              borderRadius: BorderRadius.circular(15),
                               color: Color.fromRGBO(255, 51, 51, 0.9),
                               child: MaterialButton(
                                 padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                                 minWidth: MediaQuery.of(context).size.width,
                                 onPressed: () async {
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => DriverDetails()));
+                                      MaterialPageRoute(builder: (context) => PaymentOption()));
                                 },
                                 child:  Text(
                                   "Make payment",
@@ -197,7 +201,8 @@ class _DriverDetailsState extends State<DriverDetails> {
             ]
             ),
           ],
-        ));
+        )
+    );
   }
   Padding historyBox() {
     return Padding(
@@ -299,3 +304,4 @@ class _DriverDetailsState extends State<DriverDetails> {
     );
   }
 }
+

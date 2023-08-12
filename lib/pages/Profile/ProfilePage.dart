@@ -5,6 +5,7 @@ import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
 import 'package:velocito/pages/Profile/RideHistory.dart';
@@ -563,7 +564,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           splashColor: Colors.transparent,
                           onPressed: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => VehicleSelection()));
+                                MaterialPageRoute(builder: (context) => LocationSelector()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

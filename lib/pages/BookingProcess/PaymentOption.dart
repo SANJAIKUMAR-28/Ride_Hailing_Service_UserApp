@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/OnTheWay.dart';
 
 class PaymentOption extends StatefulWidget {
   const PaymentOption({super.key});
@@ -38,14 +39,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Text('hi'),
-                      SizedBox(
-                        height: 500,
-                      ),
-                      Text('hoo'),
+                      Image.asset('assets/map.png'),
                     ],
                   ),
                 ),
@@ -78,7 +72,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                           ),
                           SizedBox(height: 12),
                           Material(
-                              elevation: 1,
+                              elevation: 4,
                               shadowColor: Colors.grey,
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
@@ -121,7 +115,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                               )),
                           SizedBox(height: 12),
                           Material(
-                              elevation: 1,
+                              elevation: 4,
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
                               shadowColor: Colors.grey,
@@ -164,14 +158,16 @@ class _PaymentOptionState extends State<PaymentOption> {
                               )),
                           SizedBox(height: 12),
                           Material(
-                              elevation: 1,
+                              elevation: 4,
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
                               shadowColor: Colors.grey,
                               child: MaterialButton(
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
-                                onPressed: () {},
+                                onPressed: () {
+                                Confirm();
+                                },
                                 child: Row(
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -184,7 +180,6 @@ class _PaymentOptionState extends State<PaymentOption> {
                                           "assets/cash.png",
                                           height: 27,
                                           width: 27,
-
                                         ),
                                         SizedBox(
                                           width: 10,
@@ -214,5 +209,51 @@ class _PaymentOptionState extends State<PaymentOption> {
             ],
           ),
         ]));
+  }
+  Confirm (){
+
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          content: Container(
+            height: 240,
+
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle,
+                  size: 95,
+                  color: Color.fromRGBO(255, 51, 51, 0.8),
+                ),
+                SizedBox(height: 5,),
+                Text('Booking Successfull',style: TextStyle(fontSize: 20,fontFamily: 'Arimo',fontWeight: FontWeight.bold),),
+                SizedBox(height: 10,),
+
+                Text('Your boooking has been confirmed',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(160, 160, 160, 1.0),fontSize: 12),),
+
+                Text('driver will pick you up soon',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(160, 160, 160, 1.0),fontSize: 12),),
+                SizedBox(height: 23,),
+                Divider(
+                  color: Colors.black12,
+                ),
+                SizedBox(height: 5,),
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => OnTheWay()));
+                  },
+                  child: Text('Done',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(255, 51, 51, 1.0),fontSize: 16,fontWeight: FontWeight.bold),),
+                )
+
+              ],
+            ),
+          )
+      );
+
+    });
   }
 }

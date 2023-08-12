@@ -52,7 +52,7 @@ class _RideOptionsState extends State<RideOptions> {
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 300,
+                height: 320,
                 child: Selection(),
 
               ),
@@ -72,7 +72,7 @@ class _RideOptionsState extends State<RideOptions> {
             topLeft: Radius.circular(20)),
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class _RideOptionsState extends State<RideOptions> {
                                     Image.asset(
                                       "${widget.img}",
                                       height: 50,
-                                      width: 90,
+                                      width: 80,
 
                                     ),
                                   ]),
@@ -170,7 +170,7 @@ class _RideOptionsState extends State<RideOptions> {
                                 padding: EdgeInsets.only(left: 5,right: 5),
                                 child: Text('3 mins',style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
                               ),
-                            )
+                            ),
                           ],
                         )
                       ],
@@ -187,7 +187,8 @@ class _RideOptionsState extends State<RideOptions> {
               ),
               SizedBox(height: 20,),
               Material(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(15),
+                elevation: 2,
                 color: Color.fromRGBO(255, 51, 51, 0.9),
                 child: MaterialButton(
                   padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
