@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color.fromRGBO(245, 245, 255, 1),
+                          color: Color.fromRGBO(255, 245, 245, 1),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                             child: Image.asset(
@@ -248,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                         splashColor: Colors.transparent,
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color.fromRGBO(245, 245, 255, 1),
+                          color: Color.fromRGBO(255, 245, 245, 1),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                             child: Image.asset(
@@ -282,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                         splashColor: Colors.transparent,
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Color.fromRGBO(245, 245, 255, 1),
+                          color: Color.fromRGBO(255, 245, 245, 1),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                             child: Image.asset(
@@ -327,7 +327,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               content: Container(

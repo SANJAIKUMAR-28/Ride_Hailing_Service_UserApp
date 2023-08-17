@@ -184,6 +184,8 @@ class _LoginState extends State<Login> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                         child: Image.asset(
                           'assets/google.png',
                           height: 25,
@@ -197,6 +199,8 @@ class _LoginState extends State<Login> {
                         width: 20,
                       ),
                       InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                         child: Image.asset(
                           'assets/fb.png',
                           height: 25,
@@ -207,6 +211,8 @@ class _LoginState extends State<Login> {
                         width: 20,
                       ),
                       InkWell(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                         child: Image.asset(
                           'assets/apple.png',
                           height: 25,

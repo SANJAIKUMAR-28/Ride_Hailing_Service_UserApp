@@ -214,7 +214,7 @@ class _PaymentOptionState extends State<PaymentOption> {
 
     showDialog(context: context, builder: (context) {
       return AlertDialog(
-          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Container(
             height: 240,

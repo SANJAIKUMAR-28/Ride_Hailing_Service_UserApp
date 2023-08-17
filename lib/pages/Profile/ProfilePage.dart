@@ -22,6 +22,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   User? user=FirebaseAuth.instance.currentUser;
   UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
   @override
   void initState() {
     super.initState();
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {});
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +121,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 color: Colors.white,
                                 size: 30,
                               ),
-                              onTap: () {},
+                              onTap: () {
+                                ref.doc(user!.uid).update({
+                                  'name':"Domer",
+                                });
+                              },
+
                             )
                           ],
                         ),
@@ -147,8 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
                                 onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => PaymentOption()));
+
                                 },
                                 child: Row(
                                   mainAxisAlignment:
@@ -291,7 +297,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onPressed: () async {
-                                  await FlutterPhoneDirectCaller.callNumber('${loggedInUser.phoneno}');
+
                                 },
                                 child: Row(
                                   mainAxisAlignment:
@@ -360,7 +366,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onPressed: () {},
+                                onPressed: () {
+
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -431,7 +439,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onPressed: () async {
                                   showDialog(context: context, builder: (context) {
                                     return AlertDialog(
-                                      backgroundColor: Colors.white,
+                                      surfaceTintColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       title: Text("Log out", style: TextStyle(
                                           fontFamily: 'Arimo',
@@ -563,8 +571,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => LocationSelector()));
+
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -693,4 +700,5 @@ class _ProfilePageState extends State<ProfilePage> {
               ))),
     );
   }
+
 }
