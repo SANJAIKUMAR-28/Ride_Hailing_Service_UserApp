@@ -310,17 +310,17 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(height: 30,),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                child:Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CarMateril('Easy drive,\nLocal vibes delight.','assets/fcar.png'),
-                    SizedBox(width: 10,),
-                    CarMateril('Effortless journey,\nCity to City.','assets/scar.png'),
-                    SizedBox(width: 10,),
-                    CarMateril('Work to wheels,\nSeamless transition.','assets/tcar.png'),
-                    SizedBox(width: 10,),
-                  ],
-                ),
+                  child:Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      CarMateril('Easy drive,\nLocal vibes delight.','assets/fcar.png'),
+                      SizedBox(width: 10,),
+                      CarMateril('Effortless journey,\nCity to City.','assets/scar.png'),
+                      SizedBox(width: 10,),
+                      CarMateril('Work to wheels,\nSeamless transition.','assets/tcar.png'),
+                      SizedBox(width: 10,),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -429,7 +429,7 @@ class _HomePageState extends State<HomePage> {
               ));
         });
   }
- SizedBox CarMateril(String Quote,String asset){
+  SizedBox CarMateril(String Quote,String asset){
     return SizedBox(
       height: 200,
       width: 150,
@@ -441,12 +441,12 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset(asset,
-            height: 120,
-            width: 150,),
+              height: 120,
+              width: 150,),
             Text(Quote,style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold,color: Colors.white),)
           ],
         ),
       ),
     );
- }
+  }
 }

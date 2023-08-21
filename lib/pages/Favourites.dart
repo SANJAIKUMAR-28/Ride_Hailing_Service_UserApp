@@ -82,8 +82,9 @@ class _FavouritesState extends State<Favourites> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         DocumentSnapshot fav = snapshot.data!.docs[index];
+                        String id =snapshot.data!.docs[index].id;
                         return historyBox(
-                            '${fav['tag']}', '${fav['from']}', '${fav['to']}');
+                            '${fav['tag']}', '${fav['from']}', '${fav['to']}',id);
                       },
                     );
                   }
@@ -111,7 +112,7 @@ class _FavouritesState extends State<Favourites> {
     );
   }
 
-  Padding historyBox(String tag, String from, String to) {
+  Padding historyBox(String tag, String from, String to,String id) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Material(
@@ -145,7 +146,7 @@ class _FavouritesState extends State<Favourites> {
                             fontWeight: FontWeight.w600,
                             color: Color.fromRGBO(255, 51, 51, 0.9)),),
                         onTap: () {
-                          deleteSubcollection();
+                          deleteSubcollection(id);
                         },
                       )
                     ]),
@@ -240,7 +241,7 @@ class _FavouritesState extends State<Favourites> {
 
     print('Subcollection created successfully.');
   }
-  void deleteSubcollection() async {
+  void deleteSubcollection(String id) async {
     // Reference to the parent collection document
     DocumentReference parentDocumentRef =
     FirebaseFirestore.instance.collection('users').doc(user!.uid);
@@ -250,7 +251,7 @@ class _FavouritesState extends State<Favourites> {
     parentDocumentRef.collection('favourites');
 
     // Create documents within the subcollection
-    await favsubcollection.doc().delete();
+    await favsubcollection.doc(id).delete();
 
     print('Deleted successfully.');
   }
