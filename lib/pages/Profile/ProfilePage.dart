@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Column(
                           children: [
                             const SizedBox(
-                              height: 15,
+                              height: 25,
                             ),
                             //wallet
                             Material(
@@ -214,82 +214,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ),
-                            //ride history
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Material(
-                              color: Colors.white,
-                              child: MaterialButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                onPressed: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => RideHistory()));
-                                },
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Row(children: [
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor:
-                                            Color.fromRGBO(255, 51, 51, 0.03),
-                                        child: Icon(
-                                          LineIcons.history,
-                                          color:
-                                              Color.fromRGBO(255, 51, 51, 0.8),
-                                          size: 25,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Ride History',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w900,
-                                                fontFamily: 'Arimo',
-                                                color: Colors.black,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(
-                                            height: 3,
-                                          ),
-                                          Text('View your trip history',
-                                              style: TextStyle(
-                                                  fontFamily: 'Arimo',
-                                                  color: Color.fromRGBO(
-                                                      171, 171, 171, 1.0),
-                                                  fontSize: 12))
-                                        ],
-                                      ),
-                                    ]),
-                                    InkWell(
-                                      child: const Icon(
-                                        LineIcons.angleRight,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                      onTap: () {
-
-                                      },
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
                             //Address
                             const SizedBox(
-                              height: 15,
+                              height: 25,
                             ),
                             Material(
                               color: Colors.white,
@@ -359,7 +286,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             //forgot password
                             const SizedBox(
-                              height: 15,
+                              height: 25,
                             ),
                             Material(
                               color: Colors.white,
@@ -429,7 +356,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             //log out
                             const SizedBox(
-                              height: 15,
+                              height: 25,
                             ),
                             Material(
                               color: Colors.white,
@@ -538,7 +465,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             const SizedBox(
-                              height: 15,
+                              height: 25,
                             ),
                           ],
                         ),
@@ -562,7 +489,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     elevation: 0,
                     child: Column(children: [
                       const SizedBox(
-                        height: 15,
+                        height: 25,
                       ),
                       //wallet
                       Material(
@@ -629,7 +556,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       //ride history
                       const SizedBox(
-                        height: 15,
+                        height: 25,
                       ),
                       Material(
                         color: Colors.white,
@@ -692,7 +619,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 25,
                       ),
                     ]),
                   )

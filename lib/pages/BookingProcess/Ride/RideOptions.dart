@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/Ride/DriverDetails.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
-
+import 'package:lottie/lottie.dart';
+import 'dart:async';
 class RideOptions extends StatefulWidget {
   final String img;
   final String cost;
@@ -194,8 +195,47 @@ class _RideOptionsState extends State<RideOptions> {
                   padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                   minWidth: MediaQuery.of(context).size.width,
                   onPressed: () async {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => DriverDetails()));
+
+                    showDialog(context: context, builder: (context) {
+                      return AlertDialog(
+                        surfaceTintColor: Colors.transparent,
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        content:Container(
+                          height: 600,
+                      child:Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      children:[
+                        Stack(
+                      alignment: Alignment.center,
+                      children:[
+                        InkWell(
+                        child:Lottie.asset("assets/searching.json"),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: (){
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => DriverDetails()));
+                          },
+                        ),
+                        Image.asset("assets/loadcar.png",
+                        height: 80,
+                          width: 50,
+                        ),
+                        ]
+
+                        ),
+                        SizedBox(height: 250,),
+                        Text("Searching for a driver",style: TextStyle(fontWeight: FontWeight.bold,fontFamily: 'Arimo',color: Colors.white,fontSize: 18),)
+                      ]
+
+                        )
+                      )
+                      );
+
+                    });
+                    //
+
                   },
                   child:  Text(
                     "Book ride",

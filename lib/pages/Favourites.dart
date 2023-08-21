@@ -140,12 +140,13 @@ class _FavouritesState extends State<Favourites> {
                       InkWell(
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        child: const Icon(
-                          Icons.edit,
-                          color: Color.fromRGBO(255, 51, 51, 0.8),
-                          size: 20,
-                        ),
-                        onTap: () {},
+                        child:  Text("DELETE",style: TextStyle(
+                            fontFamily: 'Arimo',
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(255, 51, 51, 0.9)),),
+                        onTap: () {
+                          deleteSubcollection();
+                        },
                       )
                     ]),
                 SizedBox(
@@ -238,6 +239,20 @@ class _FavouritesState extends State<Favourites> {
     });
 
     print('Subcollection created successfully.');
+  }
+  void deleteSubcollection() async {
+    // Reference to the parent collection document
+    DocumentReference parentDocumentRef =
+    FirebaseFirestore.instance.collection('users').doc(user!.uid);
+
+    // Reference to the subcollection
+    CollectionReference favsubcollection =
+    parentDocumentRef.collection('favourites');
+
+    // Create documents within the subcollection
+    await favsubcollection.doc().delete();
+
+    print('Deleted successfully.');
   }
 
   Padding addbox() {

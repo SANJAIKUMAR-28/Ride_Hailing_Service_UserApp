@@ -51,6 +51,7 @@ dependencies:
   google_maps_flutter: ^2.4.0
   flutter_google_places: ^0.3.0
   google_maps_webservice: ^0.0.19
+  lottie: ^2.6.0
   http:
 
 dev_dependencies:
@@ -103,6 +104,11 @@ flutter:
     - assets/clip.png
     - assets/map_style.txt
     - assets/cararrived.png
+    - assets/fcar.png
+    - assets/scar.png
+    - assets/tcar.png
+    - assets/searching.json
+    - assets/loadcar.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

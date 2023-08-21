@@ -57,6 +57,7 @@ class _LoginState extends State<Login> {
         child: TextFormField(
           autofocus: false,
           controller: passwordEditingController,
+          keyboardType: TextInputType.visiblePassword,
           style: TextStyle(fontFamily: 'Arimo'),
           validator: (value) {
             RegExp regex = new RegExp(r'^.{6,}$');
