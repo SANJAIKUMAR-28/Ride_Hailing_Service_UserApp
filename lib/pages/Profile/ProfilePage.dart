@@ -5,6 +5,7 @@ import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/Maps/InitialMap.dart';
 import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
@@ -123,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               onTap: () {
                                 ref.doc(user!.uid).update({
-                                  'name':"Domer",
+                                  'phoneno':"7373994102",
                                 });
                               },
 
@@ -498,7 +499,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           onPressed: () {
-
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        InitialMap()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -65,11 +65,11 @@ Future<String> ShowPlaces() async {
         borderRadius: BorderRadius.circular(20),
         color: Color.fromRGBO(196, 196, 196, 0.2),
         child: TextFormField(
-          readOnly: true,
-          onTap: () async {
-              String? selectedplace = await ShowPlaces();
-              fromcontroller.text=selectedplace;
-          },
+          //readOnly: true,
+          // onTap: () async {
+          //     String? selectedplace = await ShowPlaces();
+          //     fromcontroller.text=selectedplace;
+          // },
           autofocus: false,
           controller: fromcontroller,
           style: TextStyle(fontFamily: 'Arimo'),
@@ -124,7 +124,6 @@ Future<String> ShowPlaces() async {
         ));
     return Scaffold(
       extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 50,
         shadowColor: Colors.transparent,
@@ -188,7 +187,7 @@ Future<String> ShowPlaces() async {
                         minWidth: MediaQuery.of(context).size.width,
                         onPressed: () async {
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => VehicleSelection()));
+                              MaterialPageRoute(builder: (context) => VehicleSelection(from: fromcontroller.text, to: tocontroller.text,)));
                         },
                         child:  Text(
                           "Next",

@@ -1,22 +1,60 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/Ride/DriverDetails.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:async';
+
+import '../../../Models/user_model.dart';
 class RideOptions extends StatefulWidget {
   final String img;
   final String cost;
   final String vec;
   final String seats;
   final String time;
-  const RideOptions({super.key, required this.img, required this.cost, required this.vec, required this.seats, required this.time});
+  final String from;
+  final String to;
+  const RideOptions({super.key, required this.img, required this.cost, required this.vec, required this.seats, required this.time, required this.from, required this.to});
 
   @override
   State<RideOptions> createState() => _RideOptionsState();
 }
 
 class _RideOptionsState extends State<RideOptions> {
+  DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Requests');
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late DatabaseReference _userRef;
+  String? sts;
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    _userRef = FirebaseDatabase.instance.ref().child('Requests');
+    sts = '';
+    _userRef.child(user!.uid).onValue.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        setState(() {
+          sts= data['STATUS'];
+        });
+      }
+    });
+
+
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +138,7 @@ class _RideOptionsState extends State<RideOptions> {
                             InkWell(
                               onTap: (){
                                 Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => VehicleSelection()));
+                                    MaterialPageRoute(builder: (context) => VehicleSelection(from: widget.from, to: widget.to,)));
                               },
                               child:
                             Text('Change',style: TextStyle(fontFamily: 'Arimo',color:Color.fromRGBO(255, 51, 51, 0.8),fontSize: 12,fontWeight: FontWeight.bold),),)
@@ -195,7 +233,16 @@ class _RideOptionsState extends State<RideOptions> {
                   padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                   minWidth: MediaQuery.of(context).size.width,
                   onPressed: () async {
-
+                    Map<String, String> Requests = {
+                      'FROM':widget.from,
+                      'TO':widget.to,
+                      'VEHICLE':widget.vec ,
+                      'COST':widget.cost ,
+                      'PASSENGER-NAME': '${loggedInUser.name}',
+                      'PASSENGER-NUMBER':'${loggedInUser.phoneno}',
+                      'STATUS':'REQUESTED',
+                    };
+                    dbRef.child('${loggedInUser.uid}').set(Requests);
                     showDialog(context: context, builder: (context) {
                       return AlertDialog(
                         surfaceTintColor: Colors.transparent,
@@ -213,10 +260,15 @@ class _RideOptionsState extends State<RideOptions> {
                         child:Lottie.asset("assets/searching.json"),
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          onTap: (){
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => DriverDetails()));
-                          },
+                          onTap: () {
+
+print(sts);
+                            if (sts=="REQUESTED") {
+                              Navigator.push(context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DriverDetails()));
+                            }
+                          }
                         ),
                         Image.asset("assets/loadcar.png",
                         height: 80,

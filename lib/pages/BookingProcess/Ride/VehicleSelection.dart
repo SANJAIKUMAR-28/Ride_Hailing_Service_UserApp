@@ -10,7 +10,9 @@ import 'package:velocito/pages/BookingProcess/Ride/RideOptions.dart';
 import '../../../Models/polyline_response.dart';
 
 class VehicleSelection extends StatefulWidget {
-  const VehicleSelection({super.key});
+  final String from;
+  final String to;
+  const VehicleSelection({super.key, required this.from, required this.to});
 
   @override
   State<VehicleSelection> createState() => _VehicleSelectionState();
@@ -134,7 +136,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3',)));
+                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3', from: widget.from, to: widget.to,)));
           },
           child: Row(
               mainAxisAlignment:

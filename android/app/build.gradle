@@ -60,4 +60,8 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.0.1')
     implementation 'com.google.firebase:firebase-analytics'
+    implementation "com.mapbox.mapboxsdk:mapbox-android-core:5.0.0"
+    implementation('com.mapbox.mapboxsdk:mapbox-android-core:5.0.0') {
+        exclude group: 'com.mapbox.common', module: 'common'
+    }
 }
