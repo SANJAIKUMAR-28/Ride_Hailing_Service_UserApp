@@ -37,6 +37,7 @@ class _MobileOtpState extends State<MobileOtp> {
   int _start = 30;
 
 
+
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
@@ -257,7 +258,39 @@ class _MobileOtpState extends State<MobileOtp> {
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
 
-        },
+            PhoneAuthCredential credential = PhoneAuthProvider.credential(
+              verificationId: widget.verificationId,
+              smsCode: otpmerge(first.text, second.text, third.text,
+                  fourth.text, fifth.text, sixth.text),
+            );
+
+            try {
+              final UserCredential userCredential = await _auth.signInWithCredential(credential);
+              final User? user = userCredential.user;
+              FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+              User? user1 = _auth.currentUser;
+              UserModel userModel = UserModel();
+              userModel.email = user1!.email;
+              userModel.uid = user1.uid;
+              userModel.name = 'PRITHVI';
+              userModel.phoneno = widget.num;
+
+              await firebaseFirestore
+                  .collection("users")
+                  .doc(user?.uid)
+                  .set(userModel.toMap());
+              Fluttertoast.showToast(msg: "Account created successfully !!");
+              if (user != null) {
+                print('Success');
+                // User is successfully signed in
+              } else {
+                // Handle sign-in failure
+              }
+            } catch (e) {
+              print('Error signing in with phone number: $e');
+            }
+          },
+
         child: Text(
           "Verify",
           textAlign: TextAlign.center,
@@ -298,7 +331,7 @@ class _MobileOtpState extends State<MobileOtp> {
                     text: 'Please enter the 6-digit code sent to your phone no ',
                     style: TextStyle(fontFamily: 'Arimo')),
                 TextSpan(
-                    text: '+91 ${widget.num}',
+                    text: '${widget.num}',
                     style: TextStyle(
                         fontFamily: 'Arimo',
                         fontWeight: FontWeight.bold,
@@ -420,35 +453,6 @@ class _MobileOtpState extends State<MobileOtp> {
     return otp;
   }
 
-  void signUp(String email, String password) async {
-    if (_formkey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {passDetailsToFirestore()})
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e.message);
-      });
-    }
-  }
 
-  passDetailsToFirestore() async {
-    //calling firestore
-    //calling user model
-    //calling values
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    User? user = _auth.currentUser;
-    UserModel userModel = UserModel();
-    userModel.uid = user?.uid;
-    userModel.name = 'PRITHVI';
-    userModel.phoneno = widget.num;
-
-    await firebaseFirestore
-        .collection("users")
-        .doc(user?.uid)
-        .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfully !!");
-    Navigator.pushAndRemoveUntil((context),
-        MaterialPageRoute(builder: (context) => MobileLogin()), (route) => false);
-  }
 
 }
