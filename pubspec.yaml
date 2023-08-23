@@ -111,6 +111,8 @@ flutter:
     - assets/tcar.png
     - assets/searching.json
     - assets/loadcar.png
+    - assets/phnemailimg.png
+    - assets/ind.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

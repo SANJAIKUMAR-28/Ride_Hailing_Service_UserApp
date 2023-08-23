@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:velocito/LoginSignup/Login.dart';
+import 'package:velocito/LoginSignup/SelectOption.dart';
 import 'package:velocito/LoginSignup/Signup.dart';
 import 'package:velocito/pages/HomeScreen.dart';
 import 'package:velocito/splash.dart';
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
             }
             if(snapshot.connectionState==ConnectionState.active){
               if(snapshot.data==null){
-                return Login();
+                return SelectOption();
               }
               else{
                 return HomeScreen();
