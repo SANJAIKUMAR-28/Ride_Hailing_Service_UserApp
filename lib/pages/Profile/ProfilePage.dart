@@ -5,6 +5,8 @@ import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/LoginSignup/MobileLogin.dart';
+import 'package:velocito/LoginSignup/SelectOption.dart';
 import 'package:velocito/Maps/InitialMap.dart';
 import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
@@ -395,6 +397,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           await GoogleSignIn().signOut();
                                           FirebaseAuth.instance.signOut();
                                           Navigator.of(context).pop();
+                                          Navigator.pushAndRemoveUntil((context),
+                                              MaterialPageRoute(builder: (context) => SelectOption()), (route) => false);
                                           Fluttertoast.showToast(msg: "Signed out");
                                         },
                                             child: const Text('Yes', style: TextStyle(

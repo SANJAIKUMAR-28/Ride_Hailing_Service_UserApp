@@ -6,13 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/LoginSignup/MobileLogin.dart';
+import 'package:velocito/pages/HomePage.dart';
+import 'package:velocito/pages/HomeScreen.dart';
 
 import '../Models/user_model.dart';
+import 'Login.dart';
 
 class MobileOtp extends StatefulWidget {
   final String verificationId;
   final String num;
-  const MobileOtp({super.key, required this.verificationId, required this.num});
+  final String name;
+  final String page;
+  const MobileOtp({super.key, required this.verificationId, required this.num, required this.name, required this.page});
 
   @override
   State<MobileOtp> createState() => _MobileOtpState();
@@ -267,21 +272,26 @@ class _MobileOtpState extends State<MobileOtp> {
             try {
               final UserCredential userCredential = await _auth.signInWithCredential(credential);
               final User? user = userCredential.user;
-              FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-              User? user1 = _auth.currentUser;
-              UserModel userModel = UserModel();
-              userModel.email = user1!.email;
-              userModel.uid = user1.uid;
-              userModel.name = 'PRITHVI';
-              userModel.phoneno = widget.num;
+              if(widget.page=='2') {
+                FirebaseFirestore firebaseFirestore = FirebaseFirestore
+                    .instance;
+                User? user1 = _auth.currentUser;
+                UserModel userModel = UserModel();
+                userModel.email = user1!.email;
+                userModel.uid = user1.uid;
+                userModel.name = widget.name;
+                userModel.phoneno = widget.num;
 
-              await firebaseFirestore
-                  .collection("users")
-                  .doc(user?.uid)
-                  .set(userModel.toMap());
-              Fluttertoast.showToast(msg: "Account created successfully !!");
+                await firebaseFirestore
+                    .collection("users")
+                    .doc(user?.uid)
+                    .set(userModel.toMap());
+                Fluttertoast.showToast(msg: "Account created successfully !!");
+              }
               if (user != null) {
                 print('Success');
+                Navigator.pushAndRemoveUntil((context),
+                    MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
                 // User is successfully signed in
               } else {
                 // Handle sign-in failure

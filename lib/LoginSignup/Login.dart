@@ -230,7 +230,7 @@ class _LoginState extends State<Login> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Already a member?",
+                      Text("New member?",
                           style: TextStyle(
                               fontFamily: 'Arimo',
                               fontWeight: FontWeight.w900)),

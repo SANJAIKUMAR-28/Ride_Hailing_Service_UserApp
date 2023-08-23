@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:velocito/LoginSignup/MobileOtp.dart';
 
+import 'MobileSignUp.dart';
+
 class MobileLogin extends StatefulWidget {
   const MobileLogin({super.key});
 
@@ -34,7 +36,7 @@ class _MobileLoginState extends State<MobileLogin> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MobileOtp( verificationId: _verificationId, num: '+91 ${emailEditingController.text}',),
+          builder: (context) => MobileOtp( verificationId: _verificationId, num: '+91 ${emailEditingController.text}', name: '', page: '1',),
         ),
       );
     };
@@ -84,6 +86,9 @@ class _MobileLoginState extends State<MobileLogin> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
+          setState(() {
+            loading=true;
+          });
           verifyPhoneNumber();
         },
         child:  loading? SizedBox( height:22,width: 22,child:CircularProgressIndicator(color: Colors.white,)):Text(
@@ -170,10 +175,10 @@ class _MobileLoginState extends State<MobileLogin> {
                               fontWeight: FontWeight.w900)),
                       GestureDetector(
                         onTap: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => Signup()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MobileSignUp()));
                         },
                         child: Text(" Register now",
                             style: TextStyle(
