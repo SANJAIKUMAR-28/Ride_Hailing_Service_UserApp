@@ -1,5 +1,13 @@
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/HomeScreen.dart';
+
+import '../../Models/user_model.dart';
 
 class TripEnded extends StatefulWidget {
   const TripEnded({super.key});
@@ -9,6 +17,51 @@ class TripEnded extends StatefulWidget {
 }
 
 class _TripEndedState extends State<TripEnded> {
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Requests');
+  DatabaseReference dbRef1 = FirebaseDatabase.instance.ref().child('History');
+  String? from;
+  String? to;
+  String? cost;
+  String? driver;
+  String? driverphn;
+  String? vec;
+  String? dist;
+  String? seats;
+  String? time;
+  String? driverid;
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    dbRef.child(user!.uid).onValue.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        setState(() {
+          from=data['FROM'];
+          to=data['TO'];
+          cost=data['COST'];
+          driver=data['DRIVER-NAME'];
+          driverphn=data['DRIVER-NUMBER'];
+          vec=data['VEHICLE'];
+          dist=data['DISTANCE'];
+          seats=data['SEATS'];
+          time=data['TIME'];
+          driverid=data['DRIVER-ID'];
+        });
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +165,6 @@ class _TripEndedState extends State<TripEnded> {
                   ),
                 ],
               ),
-              
               SizedBox(height: 20,),
               Padding(
                 padding: const EdgeInsets.only(left: 20,right: 20),
@@ -124,8 +176,25 @@ class _TripEndedState extends State<TripEnded> {
                     padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                     minWidth: MediaQuery.of(context).size.width,
                     onPressed: () async {
+                      dbRef.child('${loggedInUser.uid}').remove();
+                      Map<String, String> History = {
+                        'FROM':from!,
+                        'TO':to!,
+                        'VEHICLE':vec! ,
+                        'COST':cost! ,
+                        'DRIVER-NAME':driver!,
+                        'DRIVER-NUMBER':driverphn!,
+                        'PASSENGER-NAME': '${loggedInUser.name}',
+                        'PASSENGER-NUMBER':'${loggedInUser.phoneno}',
+                        'STATUS':'COMPLETED',
+                        'DISTANCE':dist!,
+                        'SEATS':seats!,
+                        'TIME':time!,
+                        'DRIVER-ID':driverid!,
+                      };
+                      dbRef1.push().set(History);
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => TripEnded()));
+                          MaterialPageRoute(builder: (context) => HomeScreen()));
                     },
                     child:  Text(
                       "Done",

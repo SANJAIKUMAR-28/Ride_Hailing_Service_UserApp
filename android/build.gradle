@@ -6,7 +6,6 @@ buildscript {
         maven {
             url "https://maven.google.com"
         }
-        mavenCentral()
     }
 
     dependencies {

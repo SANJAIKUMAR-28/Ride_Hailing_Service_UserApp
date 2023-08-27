@@ -23,7 +23,6 @@ class _MobileLoginState extends State<MobileLogin> {
       _auth.signInWithCredential(authResult);
       // Perform any further actions upon successful verification
     };
-
     final PhoneVerificationFailed verificationFailed = (
         FirebaseAuthException authException) {
       // Handle verification failure

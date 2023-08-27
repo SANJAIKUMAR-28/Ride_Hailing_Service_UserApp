@@ -4,7 +4,8 @@ import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/RateDriver.dart';
 
 class OnTheWay extends StatefulWidget {
-  const OnTheWay({super.key});
+  final String payment;
+  const OnTheWay({super.key, required this.payment});
 
   @override
   State<OnTheWay> createState() => _OnTheWayState();
@@ -72,12 +73,22 @@ class _OnTheWayState extends State<OnTheWay> {
                                 children: [
                                   Row(
                                     children: [
+                                      (widget.payment=='Card')?
                                       Image.asset('assets/cardimg.png',
+                                        height: 30,
+                                        width: 30,
+                                      ):(widget.payment=='Cash')?Image.asset('assets/cash.png',
+                                        height: 30,
+                                        width: 30,
+                                      ):Image.asset('assets/gpay.png',
                                         height: 30,
                                         width: 30,
                                       ),
                                       SizedBox(width: 10,),
-                                      Text('**** **** 4226',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),)
+                                      (widget.payment=='Card')?
+                                      Text('**** **** 4226',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),):
+                                      (widget.payment=='Cash')?Text('Cash',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),):
+                                      Text('Google pay',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),),
                                     ],
                                   ),
                                   Row(

@@ -51,6 +51,7 @@ dependencies:
   google_maps_flutter: ^2.4.0
   flutter_google_places: ^0.3.0
   google_maps_webservice: ^0.0.19
+  flutter_stripe: ^9.3.0
   lottie: ^2.6.0
   mapbox_gl: ^0.16.0
   http:

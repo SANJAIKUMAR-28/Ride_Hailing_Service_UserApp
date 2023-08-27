@@ -266,6 +266,8 @@ class _LoginState extends State<Login> {
       idToken: googleAuth?.idToken,
     );
     UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => HomeScreen()));
     print(userCredential.user?.displayName);
   }
   void signIn(String email,String password) async

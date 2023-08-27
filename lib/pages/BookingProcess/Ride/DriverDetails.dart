@@ -1,8 +1,15 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/CancellationPage.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
+
+import '../../../Models/user_model.dart';
 
 class DriverDetails extends StatefulWidget {
   const DriverDetails({super.key});
@@ -12,6 +19,51 @@ class DriverDetails extends StatefulWidget {
 }
 
 class _DriverDetailsState extends State<DriverDetails> {
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late DatabaseReference _userRef;
+  String? name;
+  String? phn;
+  String? from;
+  String? to;
+  String? cost;
+  String? key;
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    _userRef = FirebaseDatabase.instance.ref().child('Requests');
+    name = '';
+    phn='';
+    from='';
+    to='';
+    cost='';
+    key='';
+    _userRef.child(user!.uid).onValue.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        setState(() {
+          name= data['DRIVER-NAME'];
+          phn=data['DRIVER-NUMBER'];
+          from=data['FROM'];
+          to=data['TO'];
+          cost=data['COST'];
+          key=data['key'];
+        });
+      }
+    });
+
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,6 +159,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                                 minWidth: MediaQuery.of(context).size.width,
                                 onPressed: () async {
+                                  _userRef.child(user!.uid).update({'PASSENGER-STATUS':'CONFIRMED'});
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) => PaymentOption()));
                                 },
@@ -137,7 +190,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 Colors.white,
                                 child: InkWell(
                                   onTap: () async {
-                                    await FlutterPhoneDirectCaller.callNumber('7373994102');
+                                    await FlutterPhoneDirectCaller.callNumber(phn!);
                                   },
                                   child:Icon(
                                   LineIcons.phoneVolume,
@@ -159,6 +212,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   Colors.white,
                                   child: InkWell(
                                     onTap: (){
+
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) => CancellationPage()));
                                     },
@@ -190,7 +244,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                         radius: 40,
                       child:Image.asset('assets/driver.png'),)
                     ),
-                    Text('Prithvi',style: TextStyle(
+                    Text(name!,style: TextStyle(
                       fontFamily: 'Arimo',
                       fontWeight: FontWeight.bold,
                       color: Colors.black54,
@@ -287,12 +341,12 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '59/Amman Street,Tirupur,641603',
+                                    from!,
                                     style: TextStyle(
                                         fontFamily: 'Arimo', color: Colors.grey),
                                   ),
                                   Text(
-                                    'Bannari Amman Institute of Technology,Sathy',
+                                    to!,
                                     style: TextStyle(
                                         fontFamily: 'Arimo', color: Colors.grey),
                                   ),

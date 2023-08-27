@@ -136,7 +136,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3', from: widget.from, to: widget.to,)));
+                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3', from: widget.from, to: widget.to, dist: dist,)));
           },
           child: Row(
               mainAxisAlignment:

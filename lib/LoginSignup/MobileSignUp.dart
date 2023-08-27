@@ -37,7 +37,7 @@ class _MobileSignUpState extends State<MobileSignUp> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MobileOtp( verificationId: _verificationId, num: '+91 ${passwordEditingController.text}', name: emailEditingController.text, page: '2',),
+          builder: (context) => MobileOtp( verificationId: _verificationId, num: '${passwordEditingController.text}', name: emailEditingController.text, page: '2',),
         ),
       );
     };

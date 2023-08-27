@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import '../../Models/user_model.dart';
 import 'TripEnded.dart';
 
 class CancellationPage extends StatefulWidget {
@@ -15,7 +19,55 @@ class _CancellationPageState extends State<CancellationPage> {
   bool val2 = false;
   bool val3 = false;
   bool val4 = false;
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late DatabaseReference _userRef;
+   String key='';
+   String name='';
+   String phn='';
+   String from='';
+   String to='';
+   String cost='';
+   String vec='';
+   String seats='';
+   String dist='';
+   String time='';
   @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    _userRef = FirebaseDatabase.instance.ref().child('Requests');
+    _userRef
+        .child(user!.uid)
+        .onValue
+        .listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        setState(() {
+          key = data['key'];
+          name= data['DRIVER-NAME'];
+          phn=data['DRIVER-NUMBER'];
+          from=data['FROM'];
+          to=data['TO'];
+          cost=data['COST'];
+          vec=data['VEHICLE'];
+          seats=data['SEATS'];
+          dist=data['DISTANCE'];
+          time=data['TIME'];
+        });
+      }
+    });
+  }
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -200,6 +252,33 @@ class _CancellationPageState extends State<CancellationPage> {
                     padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                     minWidth: MediaQuery.of(context).size.width,
                     onPressed: () async {
+                      if(val) {
+                        _userRef.child('${loggedInUser.uid}').update({'PASSENGER-STATUS':'CANCELLED'});
+                        _userRef.child('${loggedInUser.uid}').update(
+                            {'REASON FOR CANCELLATION': 'Don\'t want to share'});
+                      }
+                      if(val1) {
+                        _userRef.child('${loggedInUser.uid}').update({'PASSENGER-STATUS':'CANCELLED'});
+                        _userRef.child('${loggedInUser.uid}').update(
+                            {'REASON FOR CANCELLATION': 'Can\'t contact the driver'});
+                      }
+                      if(val2) {
+                        _userRef.child('${loggedInUser.uid}').update({'PASSENGER-STATUS':'CANCELLED'});
+                        _userRef.child('${loggedInUser.uid}').update(
+                            {'REASON FOR CANCELLATION': 'Driver is late'});
+                      }
+                      if(val3) {
+                        _userRef.child('${loggedInUser.uid}').update({'PASSENGER-STATUS':'CANCELLED'});
+                        _userRef.child('${loggedInUser.uid}').update(
+                            {'REASON FOR CANCELLATION': 'Price is not reasonable'});
+                      }
+                      if(val4) {
+                        _userRef.child('${loggedInUser.uid}').update({'PASSENGER-STATUS':'CANCELLED'});
+                        _userRef.child('${loggedInUser.uid}').update(
+                            {'REASON FOR CANCELLATION': 'Pickup address is incorrect'});
+                      }
+
+                      if(cost.isNotEmpty&&vec.isNotEmpty&&seats.isNotEmpty&&time.isNotEmpty&&from.isNotEmpty&&to.isNotEmpty&&dist.isNotEmpty)
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => TripEnded()));
                     },

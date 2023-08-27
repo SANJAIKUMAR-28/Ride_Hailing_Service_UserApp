@@ -17,7 +17,8 @@ class RideOptions extends StatefulWidget {
   final String time;
   final String from;
   final String to;
-  const RideOptions({super.key, required this.img, required this.cost, required this.vec, required this.seats, required this.time, required this.from, required this.to});
+  final String dist;
+  const RideOptions({super.key, required this.img, required this.cost, required this.vec, required this.seats, required this.time, required this.from, required this.to, required this.dist});
 
   @override
   State<RideOptions> createState() => _RideOptionsState();
@@ -241,8 +242,13 @@ class _RideOptionsState extends State<RideOptions> {
                       'PASSENGER-NAME': '${loggedInUser.name}',
                       'PASSENGER-NUMBER':'${loggedInUser.phoneno}',
                       'STATUS':'REQUESTED',
+                      'PASSENGER-STATUS':'INITIATED',
+                      'DISTANCE':widget.dist,
+                      'SEATS':widget.seats,
+                      'TIME':widget.time,
                     };
                     dbRef.child('${loggedInUser.uid}').set(Requests);
+
                     showDialog(context: context, builder: (context) {
                       return AlertDialog(
                         surfaceTintColor: Colors.transparent,
@@ -262,12 +268,8 @@ class _RideOptionsState extends State<RideOptions> {
                           highlightColor: Colors.transparent,
                           onTap: () {
 
-print(sts);
-                            if (sts=="REQUESTED") {
-                              Navigator.push(context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DriverDetails()));
-                            }
+                          print(sts);
+
                           }
                         ),
                         Image.asset("assets/loadcar.png",
@@ -287,7 +289,7 @@ print(sts);
 
                     });
                     //
-
+                  checksts();
                   },
                   child:  Text(
                     "Book ride",
@@ -303,5 +305,18 @@ print(sts);
             ],
           ),
         ));
+  }
+  checksts(){
+    Timer(Duration(seconds: 1), () async
+    {
+      if(sts=="ACCEPTED"){
+          Navigator.push(context,
+              MaterialPageRoute(
+                  builder: (context) => DriverDetails()));
+      }
+      else{
+        return checksts();
+      }
+    });
   }
 }

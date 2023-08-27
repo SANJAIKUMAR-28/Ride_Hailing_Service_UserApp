@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/OnTheWay.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 
 class PaymentOption extends StatefulWidget {
   const PaymentOption({super.key});
@@ -10,6 +14,57 @@ class PaymentOption extends StatefulWidget {
 }
 
 class _PaymentOptionState extends State<PaymentOption> {
+  late Map<String,dynamic> paymentIntent;
+
+  void makePayment() async{
+    try{
+      paymentIntent= await createPaymentIntent();
+
+      var gpay = PaymentSheetGooglePay(
+        merchantCountryCode: "US",
+        currencyCode: "USD",
+        testEnv: true,
+      );
+      Stripe.instance.initPaymentSheet(paymentSheetParameters: SetupPaymentSheetParameters(
+        paymentIntentClientSecret: paymentIntent!["client_secret"],
+        style: ThemeMode.dark,
+        merchantDisplayName: "Velocito",
+        googlePay: gpay,
+      ));
+
+      displayPaymentSheet();
+    } catch(e){
+
+    }
+  }
+  void displayPaymentSheet() async {
+    try{
+      await Stripe.instance.presentPaymentSheet();
+      print("done");
+    } catch(e){
+      print("failed");
+    }
+  }
+  createPaymentIntent() async {
+    try{
+      Map<String,dynamic> body={
+        "amount":"1000",
+        "currency":"INR",
+      };
+
+      http.Response response=await http.post(Uri.parse("https://api.stripe.com/v1/payment_intents"),
+          body: body,
+          headers: {
+            "Authorization":"Bearer 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",
+            "Content-type":"application/x-www-form-urlencoded"
+          }
+      );
+      return json.decode(response.body);
+    }catch(e){
+      throw Exception(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +134,9 @@ class _PaymentOptionState extends State<PaymentOption> {
                               child: MaterialButton(
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Confirm('Gpay');
+                                },
                                 child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -122,7 +179,9 @@ class _PaymentOptionState extends State<PaymentOption> {
                               child: MaterialButton(
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Confirm('Card');
+                                },
                                 child: Row(
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -166,7 +225,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
                                 onPressed: () {
-                                Confirm();
+                                Confirm('Cash');
                                 },
                                 child: Row(
                                     mainAxisAlignment:
@@ -210,7 +269,7 @@ class _PaymentOptionState extends State<PaymentOption> {
           ),
         ]));
   }
-  Confirm (){
+  Confirm (String paymentType){
 
     showDialog(context: context, builder: (context) {
       return AlertDialog(
@@ -245,7 +304,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                 InkWell(
                   onTap: (){
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OnTheWay()));
+                        MaterialPageRoute(builder: (context) => OnTheWay(payment: paymentType,)));
                   },
                   child: Text('Done',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(255, 51, 51, 1.0),fontSize: 16,fontWeight: FontWeight.bold),),
                 )
