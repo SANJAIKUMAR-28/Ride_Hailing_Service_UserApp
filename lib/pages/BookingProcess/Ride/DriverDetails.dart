@@ -27,7 +27,12 @@ class _DriverDetailsState extends State<DriverDetails> {
   String? phn;
   String? from;
   String? to;
+  String? fromtime;
+  String? totime;
   String? cost;
+  String type='';
+  String make='';
+  String num='';
   String? key;
   @override
   void initState() {
@@ -56,7 +61,12 @@ class _DriverDetailsState extends State<DriverDetails> {
           phn=data['DRIVER-NUMBER'];
           from=data['FROM'];
           to=data['TO'];
+          fromtime=data['FROM-TIME'];
+          totime=data['TO-TIME'];
           cost=data['COST'];
+          type=data['VEHICLE-TYPE'];
+          make=data['VEHICLE-MAKE'];
+          num=data['VEHICLE-NUMBER'];
           key=data['key'];
         });
       }
@@ -133,11 +143,12 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     color: Colors.grey,
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 5,right: 5),
-                                      child: Text('TN 39 BR 1446',style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
+                                      child: Text(num,style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
                                     ),
                                   ),
                                   SizedBox(height: 5,),
-                                  Text('Volkswagen Jeta',style: TextStyle(
+                                  Text('${make} ${type}'
+                                  ,style: TextStyle(
                                       fontFamily: 'Arimo',
                                       color: Colors.black54,
                                       fontSize: 14
@@ -289,12 +300,12 @@ class _DriverDetailsState extends State<DriverDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '18:45',
+                                fromtime!,
                                 style: TextStyle(
                                   fontFamily: 'Arimo',
                                 ),
                               ),
-                              Text('19:00',
+                              Text(totime!,
                                   style: TextStyle(
                                     fontFamily: 'Arimo',
                                   )),

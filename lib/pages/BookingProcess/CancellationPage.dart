@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:velocito/pages/HomeScreen.dart';
 
 import '../../Models/user_model.dart';
 import 'TripEnded.dart';
@@ -278,9 +280,10 @@ class _CancellationPageState extends State<CancellationPage> {
                             {'REASON FOR CANCELLATION': 'Pickup address is incorrect'});
                       }
 
-                      if(cost.isNotEmpty&&vec.isNotEmpty&&seats.isNotEmpty&&time.isNotEmpty&&from.isNotEmpty&&to.isNotEmpty&&dist.isNotEmpty)
+
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => TripEnded()));
+                          MaterialPageRoute(builder: (context) => HomeScreen()));
+                      Fluttertoast.showToast(msg: "Booking cancelled");
                     },
                     child:  Text(
                       "Submit",

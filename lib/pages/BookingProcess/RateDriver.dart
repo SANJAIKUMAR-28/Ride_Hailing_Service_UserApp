@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:velocito/pages/BookingProcess/RatingScreen.dart';
 
 import 'PaymentOption.dart';
+import 'TripEnded.dart';
 
 class RateDriver extends StatefulWidget {
   const RateDriver({super.key});
@@ -135,7 +136,7 @@ class _RateDriverState extends State<RateDriver> {
                                           minWidth: MediaQuery.of(context).size.width,
                                           onPressed: () async {
                                             Navigator.push(context,
-                                                MaterialPageRoute(builder: (context) => PaymentOption()));
+                                                MaterialPageRoute(builder: (context) => TripEnded()));
                                           },
                                           child:  Text(
                                             "Skip",

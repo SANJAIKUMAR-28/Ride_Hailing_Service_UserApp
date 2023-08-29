@@ -31,9 +31,20 @@ class _RideOptionsState extends State<RideOptions> {
   final CollectionReference ref = FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
   String? sts;
+  late String date;
+  late String fromtime;
+  late String totime;
   @override
   void initState() {
     super.initState();
+    DateTime dateTime=DateTime.now();
+    String day= "${dateTime.day}";
+    String month="${dateTime.month}";
+    String year="${dateTime.year}";
+    date =datefunc(day,month,year);
+    fromtime="${dateTime.hour}:${dateTime.minute}";
+    String est='24';
+    totime=TimeEstimation(fromtime,est);
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -246,6 +257,9 @@ class _RideOptionsState extends State<RideOptions> {
                       'DISTANCE':widget.dist,
                       'SEATS':widget.seats,
                       'TIME':widget.time,
+                      'FROM-TIME':fromtime,
+                      'TO-TIME':totime,
+                      'DATE':date,
                     };
                     dbRef.child('${loggedInUser.uid}').set(Requests);
 
@@ -318,5 +332,54 @@ class _RideOptionsState extends State<RideOptions> {
         return checksts();
       }
     });
+  }
+  String datefunc(String day,String mnth,String year){
+    String date='';
+    String month='';
+    if(mnth=='1'||mnth=='01'){
+      month='JANUARY';
+    }else if(mnth=='2'||mnth=='02'){
+      month='FEBRUARY';
+    }
+    else if(mnth=='3'||mnth=='03'){
+      month='MARCH';
+    }
+    else if(mnth=='4'||mnth=='04'){
+      month='APRIL';
+    }
+    else if(mnth=='5'||mnth=='05'){
+      month='MAY';
+    }
+    else if(mnth=='6'||mnth=='06'){
+      month='JUNE';
+    }
+    else if(mnth=='7'||mnth=='07'){
+      month='JULY';
+    }
+    else if(mnth=='8'||mnth=='08'){
+      month='AUGUST';
+    }
+    else if(mnth=='9'||mnth=='09'){
+      month='SEPTEMBER';
+    }
+    else if(mnth=='10'){
+      month='OCTOBER';
+    }
+    else if(mnth=='11'){
+      month='NOVEMBER';
+    }
+    else {
+      month='DECEMBER';
+    }
+    date='${day} '+'${month} '+year;
+    return date;
+  }
+  String TimeEstimation(String from,String est){
+    String estimatedTime='';
+    if(int.parse(est)>0&&int.parse(est)<60){
+      String min=from.substring(3);
+      estimatedTime=from.substring(0,3)+(int.parse(min)+int.parse(est)).toString();
+    }
+    return estimatedTime;
   }
 }

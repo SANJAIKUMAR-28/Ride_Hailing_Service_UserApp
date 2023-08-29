@@ -199,10 +199,7 @@ class _OnTheWayState extends State<OnTheWay> {
                                       ),
                                     )
                                 );
-
                               });
-
-
                             },
                             child:  Text(
                               "Cancel booking",

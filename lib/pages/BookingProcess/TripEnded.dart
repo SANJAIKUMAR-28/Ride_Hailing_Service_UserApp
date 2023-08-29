@@ -31,7 +31,11 @@ class _TripEndedState extends State<TripEnded> {
   String? dist;
   String? seats;
   String? time;
+  String? fromtime;
+  String? totime;
+  String? date;
   String? driverid;
+  String? payment;
   @override
   void initState() {
     super.initState();
@@ -57,7 +61,11 @@ class _TripEndedState extends State<TripEnded> {
           dist=data['DISTANCE'];
           seats=data['SEATS'];
           time=data['TIME'];
+          fromtime=data['FROM-TIME'];
+          totime=data['TO-TIME'];
+          date=data['DATE'];
           driverid=data['DRIVER-ID'];
+          payment=data['PAYMENT-TYPE'];
         });
       }
     });
@@ -128,12 +136,22 @@ class _TripEndedState extends State<TripEnded> {
                                     children: [
                                       Row(
                                         children: [
+                                          (payment=="Card")?
                                           Image.asset('assets/cardimg.png',
                                           height: 30,
                                             width: 30,
+                                          ):(payment=="Cash")?Image.asset('assets/cash.png',
+                                            height: 30,
+                                            width: 30,
+                                          ):Image.asset('assets/gpay.png',
+                                            height: 30,
+                                            width: 30,
                                           ),
                                           SizedBox(width: 10,),
-                                          Text('**** **** 4226',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),)
+                                          (payment=='Card')?
+                                          Text('**** **** 4226',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),):
+                                          (payment=='Cash')?Text('Cash',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),):
+                                          Text('Google pay',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),),
                                         ],
                                       ),
                                       Row(
@@ -191,6 +209,9 @@ class _TripEndedState extends State<TripEnded> {
                         'SEATS':seats!,
                         'TIME':time!,
                         'DRIVER-ID':driverid!,
+                        'FROM-TIME':fromtime!,
+                        'TO-TIME':totime!,
+                        'DATE':date!,
                       };
                       dbRef1.push().set(History);
                       Navigator.push(context,
@@ -245,12 +266,12 @@ class _TripEndedState extends State<TripEnded> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '18:45',
+                                fromtime!,
                                 style: TextStyle(
                                   fontFamily: 'Arimo',
                                 ),
                               ),
-                              Text('19:00',
+                              Text(totime!,
                                   style: TextStyle(
                                     fontFamily: 'Arimo',
                                   )),
@@ -297,12 +318,12 @@ class _TripEndedState extends State<TripEnded> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '59/Amman Street, Tirupur,641603',
+                                    from!,
                                     style: TextStyle(
                                         fontFamily: 'Arimo', color: Colors.grey),
                                   ),
                                   Text(
-                                    'Bannari Amman Institute of Technology',
+                                    to!,
                                     style: TextStyle(
                                         fontFamily: 'Arimo', color: Colors.grey),
                                   ),

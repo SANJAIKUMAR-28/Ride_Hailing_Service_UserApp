@@ -1,4 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart' as db;
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+
+import '../../Models/user_model.dart';
 
 class RideHistory extends StatefulWidget {
   const RideHistory({super.key});
@@ -8,6 +14,38 @@ class RideHistory extends StatefulWidget {
 }
 
 class _RideHistoryState extends State<RideHistory> {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  db.Query dbRef = db.FirebaseDatabase.instance.ref().child('History');
+  db.DatabaseReference reference = db.FirebaseDatabase.instance.ref().child('History');
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+
+    });
+  }
+  Widget listItem({required Map request}) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.only(left:20,top:6,right: 20,bottom: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if(request['PASSENGER-NAME']=='${loggedInUser.name}'&&request['PASSENGER-NUMBER']=='${loggedInUser.phoneno}')
+              historyBox(request['FROM'], request['TO'], request['FROM-TIME'], request['TO-TIME'], request['DATE'], request['PASSENGER-STATUS'])
+          ],
+        ),
+      ),
+    );
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,20 +61,19 @@ class _RideHistoryState extends State<RideHistory> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                historyBox('COMPLETED'),
-                historyBox('CANCELLED'),
-              ],
-            )),
+      body: FirebaseAnimatedList(
+        query: dbRef,
+        itemBuilder: (BuildContext context, db.DataSnapshot snapshot, Animation<double> animation, int index) {
+          Map request = snapshot.value as Map;
+          request['key'] = snapshot.key;
+
+          return listItem(request: request);
+        },
       ),
     );
   }
 
-  Padding historyBox(String sts) {
+  Padding historyBox(String from,String to,String fromtime,String totime,String date,String sts) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Material(
@@ -56,7 +93,7 @@ class _RideHistoryState extends State<RideHistory> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '8 JUNE 2023, 18:45',
+                        date,
                         style: TextStyle(
                             fontFamily: 'Arimo', fontWeight: FontWeight.w600,color: Color.fromRGBO(62, 73 ,88, 1.0)),
                       ),
@@ -91,12 +128,12 @@ class _RideHistoryState extends State<RideHistory> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '18:45',
+                              fromtime,
                               style: TextStyle(
                                 fontFamily: 'Arimo',
                               ),
                             ),
-                            Text('19:00',
+                            Text(totime,
                                 style: TextStyle(
                                   fontFamily: 'Arimo',
                                 )),
@@ -143,12 +180,12 @@ class _RideHistoryState extends State<RideHistory> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '59/Amman Street',
+                              from,
                               style: TextStyle(
                                   fontFamily: 'Arimo', color: Colors.grey),
                             ),
                             Text(
-                              'Tirupur,641603 hgyfutddttfydtfgfyf cfutugu Bit',
+                              to,
                               style: TextStyle(
                                   fontFamily: 'Arimo', color: Colors.grey),
                             ),

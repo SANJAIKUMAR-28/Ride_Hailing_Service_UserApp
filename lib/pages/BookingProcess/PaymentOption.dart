@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:line_icons/line_icons.dart';
@@ -5,6 +8,8 @@ import 'package:velocito/pages/BookingProcess/OnTheWay.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+
+import '../../Models/user_model.dart';
 
 class PaymentOption extends StatefulWidget {
   const PaymentOption({super.key});
@@ -15,7 +20,23 @@ class PaymentOption extends StatefulWidget {
 
 class _PaymentOptionState extends State<PaymentOption> {
   late Map<String,dynamic> paymentIntent;
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late DatabaseReference _userRef;
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    _userRef = FirebaseDatabase.instance.ref().child('Requests');
 
+  }
   void makePayment() async{
     try{
       paymentIntent= await createPaymentIntent();
@@ -303,6 +324,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                 SizedBox(height: 5,),
                 InkWell(
                   onTap: (){
+                    _userRef.child(user!.uid).update({'PAYMENT-TYPE':paymentType});
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => OnTheWay(payment: paymentType,)));
                   },
