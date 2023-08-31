@@ -53,6 +53,7 @@ dependencies:
   google_maps_webservice: ^0.0.19
   flutter_stripe: ^9.3.0
   lottie: ^2.6.0
+  intl: ^0.17.0
   mapbox_gl: ^0.16.0
   http:
 

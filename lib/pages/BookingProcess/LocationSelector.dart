@@ -187,7 +187,7 @@ Future<String> ShowPlaces() async {
                         minWidth: MediaQuery.of(context).size.width,
                         onPressed: () async {
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => VehicleSelection(from: fromcontroller.text, to: tocontroller.text,)));
+                              MaterialPageRoute(builder: (context) => VehicleSelection(from: fromcontroller.text, to: tocontroller.text, distbtw: '10.36',)));
                         },
                         child:  Text(
                           "Next",

@@ -12,7 +12,8 @@ import '../../../Models/polyline_response.dart';
 class VehicleSelection extends StatefulWidget {
   final String from;
   final String to;
-  const VehicleSelection({super.key, required this.from, required this.to});
+  final String distbtw;
+  const VehicleSelection({super.key, required this.from, required this.to, required this.distbtw});
 
   @override
   State<VehicleSelection> createState() => _VehicleSelectionState();
@@ -92,25 +93,25 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      vehicle('assets/auto.png','VC Auto','80.76','0.67 km','3'),
+                      vehicle('assets/auto.png','VC Auto',farecalc('Auto',widget.distbtw),'0.67 km','3',widget.distbtw),
                       Divider(
                         indent: 10,
                         endIndent: 10,
                         thickness: 0.5,
                       ),
-                      vehicle('assets/bike.png','VC Bike','97.98','0.79 km','1'),
+                      vehicle('assets/bike.png','VC Bike',farecalc('Bike',widget.distbtw),'0.79 km','1',widget.distbtw),
                       Divider(
                         indent: 10,
                         endIndent: 10,
                         thickness: 0.5,
                       ),
-                      vehicle('assets/taxi4.png','VC Taxi 4 seats','104.76','0.5 km','4'),
+                      vehicle('assets/taxi4.png','VC Taxi 4 seats',farecalc('Car4',widget.distbtw),'0.5 km','4',widget.distbtw),
                       Divider(
                         indent: 10,
                         endIndent: 10,
                         thickness: 0.5,
                       ),
-                      vehicle('assets/taxi7.png','VC Taxi 7 seats','156.45','1.67 km','7'),
+                      vehicle('assets/taxi7.png','VC Taxi 7 seats',farecalc('Car7',widget.distbtw),'1.67 km','7',widget.distbtw),
                       Divider(
                         indent: 10,
                         endIndent: 10,
@@ -125,7 +126,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
         ]));
   }
 
-  Material vehicle(String asset,String name,String price,String dist,String seats){
+  Material vehicle(String asset,String name,String price,String dist,String seats,String distbtw){
     return Material(
         elevation: 0,
         borderRadius: BorderRadius.circular(10),
@@ -136,7 +137,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3', from: widget.from, to: widget.to, dist: dist,)));
+                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3', from: widget.from, to: widget.to, dist: dist, distbtw: distbtw,)));
           },
           child: Row(
               mainAxisAlignment:
@@ -221,4 +222,20 @@ class _VehicleSelectionState extends State<VehicleSelection> {
 
     setState(() {});
   }
+String farecalc(String vec,String dist){
+    double fare=0;
+    if(vec=='Auto'){
+      fare = 20+(double.parse(dist)*10);
+    }
+    if(vec=='Bike'){
+      fare = 10+(double.parse(dist)*5);
+    }
+    if(vec=='Car4'){
+      fare = 30+(double.parse(dist)*15);
+    }
+    if(vec=='Car7'){
+      fare = 40+(double.parse(dist)*20);
+    }
+    return fare.toStringAsFixed(2);
+}
 }

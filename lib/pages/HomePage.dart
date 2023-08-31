@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:velocito/LoginSignup/MobileLogin.dart';
+import 'package:velocito/pages/BookingProcess/Intercity/InterCity.dart';
 import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 
 import '../Models/user_model.dart';
@@ -250,6 +251,12 @@ class _HomePageState extends State<HomePage> {
                       InkWell(
                         highlightColor: Colors.transparent,
                         splashColor: Colors.transparent,
+                        onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InterCity()));
+                        },
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
                           color: Color.fromRGBO(255, 245, 245, 1),
@@ -461,10 +468,10 @@ class _HomePageState extends State<HomePage> {
     }else if(int.parse(hour)>=12&&int.parse(hour)<16){
       greeting="Good Afternoon";
     }
-    else if(int.parse(hour)>=16&&int.parse(hour)<=19){
+    else if(int.parse(hour)>=16&&int.parse(hour)<19){
       greeting="Good Evening";
-    }else if(int.parse(hour)>=19&&int.parse(hour)<00){
-      greeting="Good Evening";
+    }else if(int.parse(hour)>=19&&int.parse(hour)<=23){
+      greeting="Good Night";
     }
     return greeting;
   }

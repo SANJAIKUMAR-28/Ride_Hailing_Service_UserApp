@@ -18,7 +18,8 @@ class RideOptions extends StatefulWidget {
   final String from;
   final String to;
   final String dist;
-  const RideOptions({super.key, required this.img, required this.cost, required this.vec, required this.seats, required this.time, required this.from, required this.to, required this.dist});
+  final String distbtw;
+  const RideOptions({super.key, required this.img, required this.cost, required this.vec, required this.seats, required this.time, required this.from, required this.to, required this.dist, required this.distbtw});
 
   @override
   State<RideOptions> createState() => _RideOptionsState();
@@ -150,7 +151,7 @@ class _RideOptionsState extends State<RideOptions> {
                             InkWell(
                               onTap: (){
                                 Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => VehicleSelection(from: widget.from, to: widget.to,)));
+                                    MaterialPageRoute(builder: (context) => VehicleSelection(from: widget.from, to: widget.to, distbtw: widget.distbtw,)));
                               },
                               child:
                             Text('Change',style: TextStyle(fontFamily: 'Arimo',color:Color.fromRGBO(255, 51, 51, 0.8),fontSize: 12,fontWeight: FontWeight.bold),),)
@@ -377,8 +378,9 @@ class _RideOptionsState extends State<RideOptions> {
   String TimeEstimation(String from,String est){
     String estimatedTime='';
     if(int.parse(est)>0&&int.parse(est)<60){
-      String min=from.substring(3);
-      estimatedTime=from.substring(0,3)+(int.parse(min)+int.parse(est)).toString();
+      int index= from.indexOf(':');
+      String min=from.substring(index+1);
+      estimatedTime=from.substring(0,index+1)+(int.parse(min)+int.parse(est)).toString();
     }
     return estimatedTime;
   }
