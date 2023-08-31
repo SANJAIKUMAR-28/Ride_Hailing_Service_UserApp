@@ -39,7 +39,7 @@ class _RideHistoryState extends State<RideHistory> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             if(request['PASSENGER-NAME']=='${loggedInUser.name}'&&request['PASSENGER-NUMBER']=='${loggedInUser.phoneno}')
-              historyBox(request['FROM'], request['TO'], request['FROM-TIME'], request['TO-TIME'], request['DATE'], request['PASSENGER-STATUS'])
+              historyBox(request['FROM'], request['TO'], request['FROM-TIME'], request['TO-TIME'], request['DATE'], request['STATUS'])
           ],
         ),
       ),

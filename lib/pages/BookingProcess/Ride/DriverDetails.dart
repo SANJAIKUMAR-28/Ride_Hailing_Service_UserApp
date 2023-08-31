@@ -23,7 +23,7 @@ class _DriverDetailsState extends State<DriverDetails> {
   UserModel loggedInUser=UserModel();
   final CollectionReference ref = FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
-  String? name;
+  String name='';
   String? phn;
   String? from;
   String? to;
@@ -33,7 +33,6 @@ class _DriverDetailsState extends State<DriverDetails> {
   String type='';
   String make='';
   String num='';
-  String? key;
   @override
   void initState() {
     super.initState();
@@ -51,7 +50,6 @@ class _DriverDetailsState extends State<DriverDetails> {
     from='';
     to='';
     cost='';
-    key='';
     _userRef.child(user!.uid).onValue.listen((event) {
       final snapshot = event.snapshot;
       if (snapshot.value != null) {
@@ -67,7 +65,6 @@ class _DriverDetailsState extends State<DriverDetails> {
           type=data['VEHICLE-TYPE'];
           make=data['VEHICLE-MAKE'];
           num=data['VEHICLE-NUMBER'];
-          key=data['key'];
         });
       }
     });

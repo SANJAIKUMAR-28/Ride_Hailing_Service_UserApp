@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:velocito/pages/BookingProcess/TripEnded.dart';
 
 import '../../Models/user_model.dart';
-import 'PaymentOption.dart';
-
 class RatingScreen extends StatefulWidget {
   const RatingScreen({super.key});
 
@@ -20,9 +18,12 @@ class _RatingScreenState extends State<RatingScreen> {
   User? user=FirebaseAuth.instance.currentUser;
   UserModel loggedInUser=UserModel();
   final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  final CollectionReference ref2 = FirebaseFirestore.instance.collection("drivers");
   DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Requests');
   String feedback='';
   String? driverid;
+  String stars='';
+  String feedbackcount='';
   int val=-1;
   int rating=0;
   @override
@@ -254,17 +255,21 @@ class _RatingScreenState extends State<RatingScreen> {
                                     padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                                     minWidth: MediaQuery.of(context).size.width,
                                     onPressed: () async {
-                                      if(val.isNaN) {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) => TripEnded()));
-                                      }
-                                      else {
                                         createSubcollection();
+                                        FirebaseFirestore.instance
+                                            .collection("drivers")
+                                            .doc(driverid)
+                                            .get()
+                                            .then((data) {
+                                          setState(() {
+                                            stars=data['stars'];
+                                            feedbackcount=data['feedbacks'];
+                                          });
+                                        });
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     TripEnded()));
-                                      }
                                     },
                                     child:  Text(
                                       "Finish",
@@ -316,7 +321,6 @@ class _RatingScreenState extends State<RatingScreen> {
     // Reference to the parent collection document
     DocumentReference parentDocumentRef =
     FirebaseFirestore.instance.collection('drivers').doc(driverid);
-
     // Reference to the subcollection
     CollectionReference favsubcollection =
     parentDocumentRef.collection('Ratings');
@@ -329,4 +333,6 @@ class _RatingScreenState extends State<RatingScreen> {
 
     print('Subcollection created successfully.');
   }
+
+
 }

@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Good Morning',
+                      greetings(),
                       style: TextStyle(
                           fontSize: 12,
                           fontFamily: 'Arimo',
@@ -451,5 +451,21 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+  String greetings(){
+    String greeting ='';
+    DateTime dateTime=DateTime.now();
+    String hour= "${dateTime.hour}";
+    if(int.parse(hour)>0&&int.parse(hour)<=11){
+      greeting="Good Morning";
+    }else if(int.parse(hour)>=12&&int.parse(hour)<16){
+      greeting="Good Afternoon";
+    }
+    else if(int.parse(hour)>=16&&int.parse(hour)<=19){
+      greeting="Good Evening";
+    }else if(int.parse(hour)>=19&&int.parse(hour)<00){
+      greeting="Good Evening";
+    }
+    return greeting;
   }
 }
