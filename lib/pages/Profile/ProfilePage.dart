@@ -11,6 +11,7 @@ import 'package:velocito/Maps/InitialMap.dart';
 import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
+import 'package:velocito/pages/Profile/InterCityStatus.dart';
 import 'package:velocito/pages/Profile/RideHistory.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../Models/user_model.dart';
@@ -297,7 +298,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onPressed: () {
-
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => InterCityStatus()));
                                 },
                                 child: Row(
                                   mainAxisAlignment:
@@ -310,7 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         backgroundColor:
                                             Color.fromRGBO(255, 51, 51, 0.03),
                                         child: Icon(
-                                          LineIcons.key,
+                                          Icons.backpack_outlined,
                                           color:
                                               Color.fromRGBO(255, 51, 51, 0.8),
                                           size: 25,
@@ -326,7 +330,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Forgot Password',
+                                            'Intercity Status',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w900,
                                                 fontFamily: 'Arimo',
@@ -336,7 +340,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           SizedBox(
                                             height: 3,
                                           ),
-                                          Text('Reset your password',
+                                          Text('Check you booking status',
                                               style: TextStyle(
                                                   fontFamily: 'Arimo',
                                                   color: Color.fromRGBO(
