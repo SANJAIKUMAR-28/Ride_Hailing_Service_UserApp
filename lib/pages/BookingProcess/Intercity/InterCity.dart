@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 
 class InterCity extends StatefulWidget {
@@ -16,6 +17,8 @@ class _InterCityState extends State<InterCity> {
   bool suv=false;
   int adult=0;
   int child=0;
+  int adultcount=0;
+  int childcount=0;
   final fromcontroller = new TextEditingController();
   final tocontroller = new TextEditingController();
   final departureController = new TextEditingController();
@@ -42,6 +45,7 @@ class _InterCityState extends State<InterCity> {
             style: TextStyle(fontFamily: 'Arimo'),
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
+
               if (value!.isEmpty) {
                 return ("Pick FROM location");
               }
@@ -140,25 +144,342 @@ class _InterCityState extends State<InterCity> {
                 border: InputBorder.none),
           ),
         ));
-    final travellers = Material(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Color.fromRGBO(151, 173, 182, 0.5)),
-              borderRadius: BorderRadius.circular(10)
-          ),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(15, 13, 15, 13),
-            child: Row(
-              children: [
-                Icon(Icons.person_outline_rounded,color: Colors.redAccent,),
-                SizedBox(width: 10,),
-                Text('${adult} Adult, ${child} Child',style: TextStyle(fontFamily: 'Arimo'))
-              ],
+    final travellers = InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: ()  {
+        showModalBottomSheet(context: context, builder: (context){
+
+          return StatefulBuilder(
+              builder: (context, setState)
+          {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                color: Colors.white,
+              ),
+              height: 280,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 15, bottom: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(''),
+                        Text('Add Passenger', style: TextStyle(
+                            fontFamily: 'Arimo', fontWeight: FontWeight.w700),),
+                        InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Icon(LineIcons.times)
+                        ),
+                      ],
+                    ),
+                    Divider(color: Colors.grey[300],),
+                    SizedBox(height: 5,),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                  children: [
+                                    Icon(Icons.person),
+                                    SizedBox(width: 8,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Text('Adult', style: TextStyle(
+                                            fontFamily: 'Arimo',
+                                            fontWeight: FontWeight.w700),),
+                                        Text('Above 12 years old',
+                                          style: TextStyle(fontSize: 10,
+                                            color: Colors.grey,
+                                            fontFamily: 'Arimo',),)
+                                      ],
+                                    ),
+                                  ]
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () {
+                                      if(adult>0)
+                                      setState(() {
+                                        adult--;
+                                      });
+
+                                    },
+                                    child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  151, 173, 182, 0.5)),
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                        ),
+                                        child: Material(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Icon(LineIcons.minus,
+                                              color: Colors.grey,),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  SizedBox(width: 5,),
+                                  Container(
+                                      height: 40,
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                151, 173, 182, 0.5)),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Material(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text('${adult}',
+                                            style: TextStyle(
+                                                fontFamily: 'Arimo'),),
+                                        ),
+                                      )
+                                  ),
+                                  SizedBox(width: 5,),
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () {
+                                      setState(() {
+                                        ++adult;
+                                      });
+
+                                    },
+                                    child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  255, 51, 51, 1.0)),
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                        ),
+                                        child: Material(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Icon(LineIcons.plus,
+                                              color: Color.fromRGBO(
+                                                  255, 51, 51, 1.0),),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 15,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                  children: [
+                                    Icon(Icons.person),
+                                    SizedBox(width: 8,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Text('Child', style: TextStyle(
+                                            fontFamily: 'Arimo',
+                                            fontWeight: FontWeight.w700),),
+                                        Text('From 2 to 12 years',
+                                          style: TextStyle(fontSize: 10,
+                                            color: Colors.grey,
+                                            fontFamily: 'Arimo',),)
+                                      ],
+                                    ),
+                                  ]
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () {
+                                      if(child>0)
+                                      setState(() {
+                                        child--;
+                                      });
+
+                                    },
+                                    child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  151, 173, 182, 0.5)),
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                        ),
+                                        child: Material(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Icon(LineIcons.minus,
+                                              color: Colors.grey,),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  SizedBox(width: 5,),
+                                  Container(
+                                      height: 40,
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                151, 173, 182, 0.5)),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Material(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text('${child}',
+                                            style: TextStyle(
+                                                fontFamily: 'Arimo'),),
+                                        ),
+                                      )
+                                  ),
+                                  SizedBox(width: 5,),
+                                  InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () {
+                                      setState(() {
+                                        child++;
+                                      });
+
+                                    },
+                                    child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Color.fromRGBO(
+                                                  255, 51, 51, 1.0)),
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                        ),
+                                        child: Material(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                              5),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Icon(LineIcons.plus,
+                                              color: Color.fromRGBO(
+                                                  255, 51, 51, 1.0),),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(color: Colors.grey[300],),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color.fromRGBO(255, 51, 51, 0.9),
+                    child: MaterialButton(
+                      padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                      minWidth: MediaQuery.of(context).size.width,
+                      onPressed: () async {
+                        setState(() {
+                          adultcount=adult;
+                          childcount=child;
+                          Navigator.of(context).pop();
+                        });
+
+                      },
+                      child: Text(
+                        "Done",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'Arimo',
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                )
+                  ],
+                ),
+              ),
+            );
+          });
+        });
+      },
+      child: Material(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Color.fromRGBO(151, 173, 182, 0.5)),
+                borderRadius: BorderRadius.circular(10)
             ),
-          )
-        ));
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(15, 13, 15, 13),
+              child: Row(
+                children: [
+                  Icon(Icons.person_outline_rounded,color: Colors.redAccent,),
+                  SizedBox(width: 10,),
+                  Text ('$adultcount Adult, $childcount Child',style: TextStyle(fontFamily: 'Arimo'))
+                ],
+              ),
+            )
+          )),
+    );
     return Scaffold(
         resizeToAvoidBottomInset: false,
       body:  Column(
