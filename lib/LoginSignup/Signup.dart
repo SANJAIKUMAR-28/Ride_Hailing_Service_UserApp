@@ -17,8 +17,8 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  final _auth=FirebaseAuth.instance;
-  EmailOTP myauth=EmailOTP();
+  final _auth = FirebaseAuth.instance;
+  EmailOTP myauth = EmailOTP();
   final _formkey = GlobalKey<FormState>();
   final nameEditingController = new TextEditingController();
   final emailEditingController = new TextEditingController();
@@ -123,7 +123,6 @@ class _SignupState extends State<Signup> {
         child: TextFormField(
           autofocus: false,
           controller: passwordEditingController,
-
           style: TextStyle(fontFamily: 'Arimo'),
           obscureText: _isHidden,
           validator: (value) {
@@ -162,7 +161,7 @@ class _SignupState extends State<Signup> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
-          if(_formkey.currentState!.validate()) {
+          if (_formkey.currentState!.validate()) {
             myauth.setConfig(
                 appEmail: "teamrogue2025@gmail.com",
                 appName: "Velocito",
@@ -170,21 +169,22 @@ class _SignupState extends State<Signup> {
                 otpLength: 6,
                 otpType: OTPType.digitsOnly);
             if (await myauth.sendOTP() == true) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("OTP has been sent"),
               ));
               Navigator.pushAndRemoveUntil(
-                  (context), MaterialPageRoute(builder: (context) =>
-                  SignupOTP(mail: emailEditingController.text.trim(),
-                    password: passwordEditingController.text,
-                    name: nameEditingController.text.trim(),
-                    phn: phoneEditingController.text.trim(),
-                    myauth: myauth,)),
-                      (route) => false);
+                  (context),
+                  MaterialPageRoute(
+                      builder: (context) => SignupOTP(
+                            mail: emailEditingController.text.trim(),
+                            password: passwordEditingController.text,
+                            name: nameEditingController.text.trim(),
+                            phn: phoneEditingController.text.trim(),
+                            myauth: myauth,
+                          )),
+                  (route) => false);
             } else {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Oops, OTP send failed"),
               ));
             }
@@ -333,14 +333,15 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  SignInWithGoogle() async{
-    GoogleSignInAccount? googleUser= await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? googleAuth= await googleUser?.authentication;
-    AuthCredential credential=GoogleAuthProvider.credential(
+  SignInWithGoogle() async {
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-    UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
     UserModel userModel = UserModel();

@@ -24,9 +24,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User? user=FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser=UserModel();
-  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  final CollectionReference ref =
+      FirebaseFirestore.instance.collection("users");
   @override
   void initState() {
     super.initState();
@@ -74,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                             Row(children: [
+                            Row(children: [
                               CircleAvatar(
                                 radius: 30,
                                 backgroundColor: Colors.white,
@@ -102,18 +103,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(
                                     height: 3,
                                   ),
-                                  (loggedInUser.phoneno!=null)?
-                                  Text('${loggedInUser.phoneno}',
-                                      style: TextStyle(
-                                          fontFamily: 'Arimo',
-                                          color: Color.fromRGBO(
-                                              215, 215, 215, 1.0),
-                                          fontSize: 12)):Text('Add mobile number',
-                                      style: TextStyle(
-                                          fontFamily: 'Arimo',
-                                          color: Color.fromRGBO(
-                                              215, 215, 215, 1.0),
-                                          fontSize: 12))
+                                  (loggedInUser.phoneno != null)
+                                      ? Text('${loggedInUser.phoneno}',
+                                          style: TextStyle(
+                                              fontFamily: 'Arimo',
+                                              color: Color.fromRGBO(
+                                                  215, 215, 215, 1.0),
+                                              fontSize: 12))
+                                      : Text('Add mobile number',
+                                          style: TextStyle(
+                                              fontFamily: 'Arimo',
+                                              color: Color.fromRGBO(
+                                                  215, 215, 215, 1.0),
+                                              fontSize: 12))
                                 ],
                               ),
                             ]),
@@ -127,10 +129,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               onTap: () {
                                 ref.doc(user!.uid).update({
-                                  'phoneno':"7373994102",
+                                  'phoneno': "7373994102",
                                 });
                               },
-
                             )
                           ],
                         ),
@@ -157,9 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
-                                onPressed: () {
-
-                                },
+                                onPressed: () {},
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -227,9 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
-                                onPressed: () async {
-
-                                },
+                                onPressed: () async {},
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -301,7 +298,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => InterCityStatus()));
+                                          builder: (context) =>
+                                              InterCityStatus()));
                                 },
                                 child: Row(
                                   mainAxisAlignment:
@@ -371,49 +369,68 @@ class _ProfilePageState extends State<ProfilePage> {
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onPressed: () async {
-                                  showDialog(context: context, builder: (context) {
-                                    return AlertDialog(
-                                      surfaceTintColor: Colors.transparent,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      title: Text("Log out", style: TextStyle(
-                                          fontFamily: 'Arimo',
-                                          color: Color.fromRGBO(255, 51, 51, 0.8),
-                                          fontWeight: FontWeight.bold)),
-                                      content: SingleChildScrollView(
-                                        child: ListBody(
-                                          children: const<Widget>[
-                                            Text(
-                                                "Are you sure want to sign out?",
-                                                style: TextStyle(
-                                                    fontFamily: 'Arimo')),
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          surfaceTintColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          title: Text("Log out",
+                                              style: TextStyle(
+                                                  fontFamily: 'Arimo',
+                                                  color: Color.fromRGBO(
+                                                      255, 51, 51, 0.8),
+                                                  fontWeight: FontWeight.bold)),
+                                          content: SingleChildScrollView(
+                                            child: ListBody(
+                                              children: const <Widget>[
+                                                Text(
+                                                    "Are you sure want to sign out?",
+                                                    style: TextStyle(
+                                                        fontFamily: 'Arimo')),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('No',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Arimo',
+                                                        color: Color.fromRGBO(
+                                                            255, 51, 51, 0.8),
+                                                        fontWeight:
+                                                            FontWeight.bold))),
+                                            TextButton(
+                                                onPressed: () async {
+                                                  await GoogleSignIn()
+                                                      .signOut();
+                                                  FirebaseAuth.instance
+                                                      .signOut();
+                                                  Navigator.of(context).pop();
+                                                  Navigator.pushAndRemoveUntil(
+                                                      (context),
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SelectOption()),
+                                                      (route) => false);
+                                                  Fluttertoast.showToast(
+                                                      msg: "Signed out");
+                                                },
+                                                child: const Text('Yes',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Arimo',
+                                                        color: Color.fromRGBO(
+                                                            255, 51, 51, 0.8),
+                                                        fontWeight:
+                                                            FontWeight.bold)))
                                           ],
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                            child: const Text('No', style: TextStyle(
-                                                fontFamily: 'Arimo',
-                                                color: Color.fromRGBO(255, 51, 51, 0.8),
-                                                fontWeight: FontWeight.bold))),
-                                        TextButton(onPressed: () async {
-                                          await GoogleSignIn().signOut();
-                                          FirebaseAuth.instance.signOut();
-                                          Navigator.of(context).pop();
-                                          Navigator.pushAndRemoveUntil((context),
-                                              MaterialPageRoute(builder: (context) => SelectOption()), (route) => false);
-                                          Fluttertoast.showToast(msg: "Signed out");
-                                        },
-                                            child: const Text('Yes', style: TextStyle(
-                                                fontFamily: 'Arimo',
-                                                color:Color.fromRGBO(255, 51, 51, 0.8),
-                                                fontWeight: FontWeight.bold)))
-                                      ],
-                                    );
-
-                                  });
-
+                                        );
+                                      });
                                 },
                                 child: Row(
                                   mainAxisAlignment:
@@ -510,8 +527,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        InitialMap()));
+                                    builder: (context) => InitialMap()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -640,5 +656,4 @@ class _ProfilePageState extends State<ProfilePage> {
               ))),
     );
   }
-
 }

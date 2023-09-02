@@ -17,7 +17,12 @@ class MobileOtp extends StatefulWidget {
   final String num;
   final String name;
   final String page;
-  const MobileOtp({super.key, required this.verificationId, required this.num, required this.name, required this.page});
+  const MobileOtp(
+      {super.key,
+      required this.verificationId,
+      required this.num,
+      required this.name,
+      required this.page});
 
   @override
   State<MobileOtp> createState() => _MobileOtpState();
@@ -41,13 +46,11 @@ class _MobileOtpState extends State<MobileOtp> {
   late Timer _timer;
   int _start = 30;
 
-
-
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         if (_start == 0) {
           setState(() {
             timer.cancel();
@@ -262,45 +265,45 @@ class _MobileOtpState extends State<MobileOtp> {
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
+          PhoneAuthCredential credential = PhoneAuthProvider.credential(
+            verificationId: widget.verificationId,
+            smsCode: otpmerge(first.text, second.text, third.text, fourth.text,
+                fifth.text, sixth.text),
+          );
 
-            PhoneAuthCredential credential = PhoneAuthProvider.credential(
-              verificationId: widget.verificationId,
-              smsCode: otpmerge(first.text, second.text, third.text,
-                  fourth.text, fifth.text, sixth.text),
-            );
+          try {
+            final UserCredential userCredential =
+                await _auth.signInWithCredential(credential);
+            final User? user = userCredential.user;
+            if (widget.page == '2') {
+              FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+              User? user1 = _auth.currentUser;
+              UserModel userModel = UserModel();
+              userModel.email = user1!.email;
+              userModel.uid = user1.uid;
+              userModel.name = widget.name;
+              userModel.phoneno = widget.num;
 
-            try {
-              final UserCredential userCredential = await _auth.signInWithCredential(credential);
-              final User? user = userCredential.user;
-              if(widget.page=='2') {
-                FirebaseFirestore firebaseFirestore = FirebaseFirestore
-                    .instance;
-                User? user1 = _auth.currentUser;
-                UserModel userModel = UserModel();
-                userModel.email = user1!.email;
-                userModel.uid = user1.uid;
-                userModel.name = widget.name;
-                userModel.phoneno = widget.num;
-
-                await firebaseFirestore
-                    .collection("users")
-                    .doc(user?.uid)
-                    .set(userModel.toMap());
-                Fluttertoast.showToast(msg: "Account created successfully !!");
-              }
-              if (user != null) {
-                print('Success');
-                Navigator.pushAndRemoveUntil((context),
-                    MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
-                // User is successfully signed in
-              } else {
-                // Handle sign-in failure
-              }
-            } catch (e) {
-              print('Error signing in with phone number: $e');
+              await firebaseFirestore
+                  .collection("users")
+                  .doc(user?.uid)
+                  .set(userModel.toMap());
+              Fluttertoast.showToast(msg: "Account created successfully !!");
             }
-          },
-
+            if (user != null) {
+              print('Success');
+              Navigator.pushAndRemoveUntil(
+                  (context),
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (route) => false);
+              // User is successfully signed in
+            } else {
+              // Handle sign-in failure
+            }
+          } catch (e) {
+            print('Error signing in with phone number: $e');
+          }
+        },
         child: Text(
           "Verify",
           textAlign: TextAlign.center,
@@ -338,7 +341,8 @@ class _MobileOtpState extends State<MobileOtp> {
               ),
               Text.rich(TextSpan(children: [
                 TextSpan(
-                    text: 'Please enter the 6-digit code sent to your phone no ',
+                    text:
+                        'Please enter the 6-digit code sent to your phone no ',
                     style: TextStyle(fontFamily: 'Arimo')),
                 TextSpan(
                     text: '${widget.num}',
@@ -415,8 +419,10 @@ class _MobileOtpState extends State<MobileOtp> {
                           fontFamily: 'Arimo', fontWeight: FontWeight.w900)),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MobileLogin()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MobileLogin()));
                     },
                     child: Text(" Resend again",
                         style: TextStyle(
@@ -462,7 +468,4 @@ class _MobileOtpState extends State<MobileOtp> {
     print(otp);
     return otp;
   }
-
-
-
 }

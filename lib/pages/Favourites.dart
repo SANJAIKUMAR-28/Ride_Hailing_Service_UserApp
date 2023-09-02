@@ -82,9 +82,9 @@ class _FavouritesState extends State<Favourites> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         DocumentSnapshot fav = snapshot.data!.docs[index];
-                        String id =snapshot.data!.docs[index].id;
-                        return historyBox(
-                            '${fav['tag']}', '${fav['from']}', '${fav['to']}',id);
+                        String id = snapshot.data!.docs[index].id;
+                        return historyBox('${fav['tag']}', '${fav['from']}',
+                            '${fav['to']}', id);
                       },
                     );
                   }
@@ -112,7 +112,7 @@ class _FavouritesState extends State<Favourites> {
     );
   }
 
-  Padding historyBox(String tag, String from, String to,String id) {
+  Padding historyBox(String tag, String from, String to, String id) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Material(
@@ -141,10 +141,13 @@ class _FavouritesState extends State<Favourites> {
                       InkWell(
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        child:  Text("DELETE",style: TextStyle(
-                            fontFamily: 'Arimo',
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(255, 51, 51, 0.9)),),
+                        child: Text(
+                          "DELETE",
+                          style: TextStyle(
+                              fontFamily: 'Arimo',
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(255, 51, 51, 0.9)),
+                        ),
                         onTap: () {
                           deleteSubcollection(id);
                         },
@@ -241,14 +244,15 @@ class _FavouritesState extends State<Favourites> {
 
     print('Subcollection created successfully.');
   }
+
   void deleteSubcollection(String id) async {
     // Reference to the parent collection document
     DocumentReference parentDocumentRef =
-    FirebaseFirestore.instance.collection('users').doc(user!.uid);
+        FirebaseFirestore.instance.collection('users').doc(user!.uid);
 
     // Reference to the subcollection
     CollectionReference favsubcollection =
-    parentDocumentRef.collection('favourites');
+        parentDocumentRef.collection('favourites');
 
     // Create documents within the subcollection
     await favsubcollection.doc(id).delete();
@@ -265,7 +269,7 @@ class _FavouritesState extends State<Favourites> {
           child: TextFormField(
             autofocus: false,
             controller: fromController,
-            style: TextStyle(fontFamily: 'Arimo',fontSize: 13),
+            style: TextStyle(fontFamily: 'Arimo', fontSize: 13),
             keyboardType: TextInputType.text,
             validator: (value) {
               if (value!.isEmpty) {
@@ -290,7 +294,7 @@ class _FavouritesState extends State<Favourites> {
           child: TextFormField(
             autofocus: false,
             controller: toController,
-            style: TextStyle(fontFamily: 'Arimo',fontSize: 13),
+            style: TextStyle(fontFamily: 'Arimo', fontSize: 13),
             keyboardType: TextInputType.text,
             validator: (value) {
               if (value!.isEmpty) {
@@ -316,7 +320,6 @@ class _FavouritesState extends State<Favourites> {
       child: Material(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
-
         child: SizedBox(
           height: 140,
           child: Padding(
@@ -392,7 +395,7 @@ class _FavouritesState extends State<Favourites> {
               child: TextFormField(
                 autofocus: false,
                 controller: tagController,
-                style: TextStyle(fontFamily: 'Arimo',fontSize: 13),
+                style: TextStyle(fontFamily: 'Arimo', fontSize: 13),
                 keyboardType: TextInputType.text,
                 validator: (value) {
                   if (value!.isEmpty) {

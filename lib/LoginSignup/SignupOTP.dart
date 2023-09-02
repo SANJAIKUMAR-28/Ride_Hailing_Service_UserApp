@@ -22,7 +22,8 @@ class SignupOTP extends StatefulWidget {
       required this.mail,
       required this.password,
       required this.name,
-      required this.phn, required this.myauth});
+      required this.phn,
+      required this.myauth});
 
   @override
   State<SignupOTP> createState() => _SignupOTPState();
@@ -45,7 +46,6 @@ class _SignupOTPState extends State<SignupOTP> {
   late FocusNode sixthNode;
   late Timer _timer;
   int _start = 30;
-
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -471,5 +471,4 @@ class _SignupOTPState extends State<SignupOTP> {
     Navigator.pushAndRemoveUntil((context),
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
-
 }

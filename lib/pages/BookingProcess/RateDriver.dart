@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:velocito/pages/BookingProcess/RatingScreen.dart';
 
+import '../../Models/user_model.dart';
 import 'PaymentOption.dart';
 import 'TripEnded.dart';
 
@@ -12,6 +16,44 @@ class RateDriver extends StatefulWidget {
 }
 
 class _RateDriverState extends State<RateDriver> {
+  DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Requests');
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late DatabaseReference _userRef;
+  String name='';
+  String phn='';
+  String type='';
+  String make='';
+  String num='';
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    _userRef = FirebaseDatabase.instance.ref().child('Requests');
+    _userRef.child(user!.uid).onValue.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        setState(() {
+          name= data['DRIVER-NAME'];
+          phn=data['DRIVER-NUMBER'];
+          type=data['VEHICLE-TYPE'];
+          make=data['VEHICLE-MAKE'];
+          num=data['VEHICLE-NUMBER'];
+        });
+      }
+    });
+
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,11 +123,11 @@ class _RateDriverState extends State<RateDriver> {
                                         color: Colors.grey,
                                         child: Padding(
                                           padding: EdgeInsets.only(left: 5,right: 5),
-                                          child: Text('TN 39 BR 1446',style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
+                                          child: Text(num,style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
                                         ),
                                       ),
                                       SizedBox(height: 5,),
-                                      Text('Volkswagen Jeta',style: TextStyle(
+                                      Text('$make $type',style: TextStyle(
                                           fontFamily: 'Arimo',
                                           color: Colors.black54,
                                           fontSize: 14
@@ -172,7 +214,7 @@ class _RateDriverState extends State<RateDriver> {
                               radius: 40,
                               child:Image.asset('assets/driver.png'),)
                         ),
-                        Text('Prithvi',style: TextStyle(
+                        Text(name,style: TextStyle(
                             fontFamily: 'Arimo',
                             fontWeight: FontWeight.bold,
                             color: Colors.black54,

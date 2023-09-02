@@ -17,7 +17,8 @@ class _RideHistoryState extends State<RideHistory> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   db.Query dbRef = db.FirebaseDatabase.instance.ref().child('History');
-  db.DatabaseReference reference = db.FirebaseDatabase.instance.ref().child('History');
+  db.DatabaseReference reference =
+      db.FirebaseDatabase.instance.ref().child('History');
   @override
   void initState() {
     super.initState();
@@ -27,25 +28,27 @@ class _RideHistoryState extends State<RideHistory> {
         .get()
         .then((value) {
       this.loggedInUser = UserModel.fromMap(value.data());
-
     });
   }
+
   Widget listItem({required Map request}) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.only(left:20,top:6,right: 20,bottom: 6),
+        padding: EdgeInsets.only(left: 20, top: 6, right: 20, bottom: 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            if(request['PASSENGER-NAME']=='${loggedInUser.name}'&&request['PASSENGER-NUMBER']=='${loggedInUser.phoneno}')
-              historyBox(request['FROM'], request['TO'], request['FROM-TIME'], request['TO-TIME'], request['DATE'], request['STATUS'])
+            if (request['PASSENGER-NAME'] == '${loggedInUser.name}' &&
+                request['PASSENGER-NUMBER'] == '${loggedInUser.phoneno}')
+              historyBox(request['FROM'], request['TO'], request['FROM-TIME'],
+                  request['TO-TIME'], request['DATE'], request['STATUS'])
           ],
         ),
       ),
     );
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +66,8 @@ class _RideHistoryState extends State<RideHistory> {
       ),
       body: FirebaseAnimatedList(
         query: dbRef,
-        itemBuilder: (BuildContext context, db.DataSnapshot snapshot, Animation<double> animation, int index) {
+        itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
+            Animation<double> animation, int index) {
           Map request = snapshot.value as Map;
           request['key'] = snapshot.key;
 
@@ -73,7 +77,8 @@ class _RideHistoryState extends State<RideHistory> {
     );
   }
 
-  Padding historyBox(String from,String to,String fromtime,String totime,String date,String sts) {
+  Padding historyBox(String from, String to, String fromtime, String totime,
+      String date, String sts) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Material(
@@ -95,7 +100,9 @@ class _RideHistoryState extends State<RideHistory> {
                       Text(
                         date,
                         style: TextStyle(
-                            fontFamily: 'Arimo', fontWeight: FontWeight.w600,color: Color.fromRGBO(62, 73 ,88, 1.0)),
+                            fontFamily: 'Arimo',
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(62, 73, 88, 1.0)),
                       ),
                       ('${sts}' == 'COMPLETED')
                           ? Text('${sts}',

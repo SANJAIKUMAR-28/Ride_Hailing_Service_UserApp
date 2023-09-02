@@ -17,7 +17,7 @@ class _LoginState extends State<Login> {
   final emailEditingController = new TextEditingController();
   final passwordEditingController = new TextEditingController();
   bool loading = false;
-  final _auth=FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     final emailField = Material(
@@ -97,15 +97,22 @@ class _LoginState extends State<Login> {
         onPressed: () async {
           signIn(emailEditingController.text, passwordEditingController.text);
         },
-        child:  loading? SizedBox( height:22,width: 22,child:CircularProgressIndicator(color: Colors.white,)):Text(
-          "Next >",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 17,
-              fontFamily: 'Arimo',
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        ),
+        child: loading
+            ? SizedBox(
+                height: 22,
+                width: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ))
+            : Text(
+                "Next >",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 17,
+                    fontFamily: 'Arimo',
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
       ),
     );
     return Scaffold(
@@ -258,33 +265,34 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-  SignInWithGoogle() async{
-    GoogleSignInAccount? googleUser= await GoogleSignIn().signIn();
-    GoogleSignInAuthentication? googleAuth= await googleUser?.authentication;
-    AuthCredential credential=GoogleAuthProvider.credential(
+
+  SignInWithGoogle() async {
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-    UserCredential userCredential= await FirebaseAuth.instance.signInWithCredential(credential);
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeScreen()));
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
     print(userCredential.user?.displayName);
   }
-  void signIn(String email,String password) async
-  {
+
+  void signIn(String email, String password) async {
     setState(() {
       loading = true;
     });
     if (_formkey.currentState!.validate()) {
-      await _auth.signInWithEmailAndPassword(
-          email: email.trim(), password: password)
-          .then((uid) =>
-      {
-        Fluttertoast.showToast(msg: "Login successful"),
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => HomeScreen())),
-
-      }).catchError((e) {
+      await _auth
+          .signInWithEmailAndPassword(email: email.trim(), password: password)
+          .then((uid) => {
+                Fluttertoast.showToast(msg: "Login successful"),
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => HomeScreen())),
+              })
+          .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
         setState(() {
           loading = false;

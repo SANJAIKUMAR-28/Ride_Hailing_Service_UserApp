@@ -19,20 +19,21 @@ class DriverDetails extends StatefulWidget {
 }
 
 class _DriverDetailsState extends State<DriverDetails> {
-  User? user=FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser=UserModel();
-  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  final CollectionReference ref =
+      FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
-  String name='';
+  String name = '';
   String? phn;
   String? from;
   String? to;
   String? fromtime;
   String? totime;
   String? cost;
-  String type='';
-  String make='';
-  String num='';
+  String type = '';
+  String make = '';
+  String num = '';
   @override
   void initState() {
     super.initState();
@@ -46,31 +47,30 @@ class _DriverDetailsState extends State<DriverDetails> {
     });
     _userRef = FirebaseDatabase.instance.ref().child('Requests');
     name = '';
-    phn='';
-    from='';
-    to='';
-    cost='';
+    phn = '';
+    from = '';
+    to = '';
+    cost = '';
     _userRef.child(user!.uid).onValue.listen((event) {
       final snapshot = event.snapshot;
       if (snapshot.value != null) {
         final data = Map<String, dynamic>.from(snapshot.value as dynamic);
         setState(() {
-          name= data['DRIVER-NAME'];
-          phn=data['DRIVER-NUMBER'];
-          from=data['FROM'];
-          to=data['TO'];
-          fromtime=data['FROM-TIME'];
-          totime=data['TO-TIME'];
-          cost=data['COST'];
-          type=data['VEHICLE-TYPE'];
-          make=data['VEHICLE-MAKE'];
-          num=data['VEHICLE-NUMBER'];
+          name = data['DRIVER-NAME'];
+          phn = data['DRIVER-NUMBER'];
+          from = data['FROM'];
+          to = data['TO'];
+          fromtime = data['FROM-TIME'];
+          totime = data['TO-TIME'];
+          cost = data['COST'];
+          type = data['VEHICLE-TYPE'];
+          make = data['VEHICLE-MAKE'];
+          num = data['VEHICLE-NUMBER'];
         });
       }
     });
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,15 +98,11 @@ class _DriverDetailsState extends State<DriverDetails> {
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.vertical,
                 child: Column(
-                  children: [
-                    Image.asset('assets/map.png')
-                  ],
+                  children: [Image.asset('assets/map.png')],
                 ),
               ),
             ),
-            Stack(
-              clipBehavior: Clip.none,
-                children:<Widget> [
+            Stack(clipBehavior: Clip.none, children: <Widget>[
               SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: 500,
@@ -117,7 +113,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                         topLeft: Radius.circular(20)),
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20,10),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,7 +124,9 @@ class _DriverDetailsState extends State<DriverDetails> {
                               thickness: 3,
                             ),
                           ),
-                          SizedBox(height: 30,),
+                          SizedBox(
+                            height: 30,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -139,26 +137,38 @@ class _DriverDetailsState extends State<DriverDetails> {
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.grey,
                                     child: Padding(
-                                      padding: EdgeInsets.only(left: 5,right: 5),
-                                      child: Text(num,style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
+                                      padding:
+                                          EdgeInsets.only(left: 5, right: 5),
+                                      child: Text(
+                                        num,
+                                        style: TextStyle(
+                                            fontFamily: 'Arimo',
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(height: 5,),
-                                  Text('${make} ${type}'
-                                  ,style: TextStyle(
-                                      fontFamily: 'Arimo',
-                                      color: Colors.black54,
-                                      fontSize: 14
-                                  ))
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text('${make} ${type}',
+                                      style: TextStyle(
+                                          fontFamily: 'Arimo',
+                                          color: Colors.black54,
+                                          fontSize: 14))
                                 ],
                               )
                             ],
                           ),
-                          SizedBox(height: 40,),
-                              historyBox(),
-                          SizedBox(height: 40,),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          historyBox(),
+                          SizedBox(
+                            height: 40,
+                          ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 30,right: 30),
+                            padding: const EdgeInsets.only(left: 30, right: 30),
                             child: Material(
                               elevation: 2,
                               borderRadius: BorderRadius.circular(15),
@@ -167,11 +177,18 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                                 minWidth: MediaQuery.of(context).size.width,
                                 onPressed: () async {
-                                  _userRef.child(user!.uid).update({'PASSENGER-STATUS':'CONFIRMED'});
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) => PaymentOption()));
+                                  _userRef.child(user!.uid).update(
+                                      {'PASSENGER-STATUS': 'CONFIRMED'});
+                                  _userRef
+                                      .child(user!.uid)
+                                      .update({'TRIP-STATUS': 'ONGOING'});
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PaymentOption()));
                                 },
-                                child:  Text(
+                                child: Text(
                                   "Make payment",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -183,53 +200,52 @@ class _DriverDetailsState extends State<DriverDetails> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20,),
+                          SizedBox(
+                            height: 20,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               PhysicalModel(
-                                elevation:2,
+                                elevation: 2,
                                 shape: BoxShape.circle,
                                 color: Colors.transparent,
-                                child:
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor:
-                                Colors.white,
-                                child: InkWell(
-                                  onTap: () async {
-                                    await FlutterPhoneDirectCaller.callNumber(phn!);
-                                  },
-                                  child:Icon(
-                                  LineIcons.phoneVolume,
-                                  color:
-                                  Color.fromRGBO(255, 51, 51, 0.8),
-                                  size: 25,
+                                child: CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor: Colors.white,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await FlutterPhoneDirectCaller.callNumber(
+                                          phn!);
+                                    },
+                                    child: Icon(
+                                      LineIcons.phoneVolume,
+                                      color: Color.fromRGBO(255, 51, 51, 0.8),
+                                      size: 25,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              ),
-                              ),
                               PhysicalModel(
-                                elevation:2,
+                                elevation: 2,
                                 color: Colors.transparent,
                                 shape: BoxShape.circle,
-                                child:
-                                CircleAvatar(
+                                child: CircleAvatar(
                                   radius: 30,
-                                  backgroundColor:
-                                  Colors.white,
+                                  backgroundColor: Colors.white,
                                   child: InkWell(
-                                    onTap: (){
-
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => CancellationPage()));
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CancellationPage()));
                                     },
-                                    child:Icon(
-                                    LineIcons.times,
-                                    color:
-                                    Color.fromRGBO(255, 51, 51, 0.8),
-                                    size: 25,
-                                  ),
+                                    child: Icon(
+                                      LineIcons.times,
+                                      color: Color.fromRGBO(255, 51, 51, 0.8),
+                                      size: 25,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -241,33 +257,29 @@ class _DriverDetailsState extends State<DriverDetails> {
                   )),
               Positioned(
                 top: -40,
-                child:
-                Column(
+                child: Column(
                   children: [
                     CircleAvatar(
-                      radius: 55,
-                      backgroundColor: Colors.white,
-                      child:
-                      CircleAvatar(
-                        radius: 40,
-                      child:Image.asset('assets/driver.png'),)
-                    ),
-                    Text(name!,style: TextStyle(
-                      fontFamily: 'Arimo',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                      fontSize: 16
-                    ))
+                        radius: 55,
+                        backgroundColor: Colors.white,
+                        child: CircleAvatar(
+                          radius: 40,
+                          child: Image.asset('assets/driver.png'),
+                        )),
+                    Text(name,
+                        style: TextStyle(
+                            fontFamily: 'Arimo',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16))
                   ],
                 ),
               ),
-
-            ]
-            ),
+            ]),
           ],
-        )
-    );
+        ));
   }
+
   Padding historyBox() {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
@@ -286,7 +298,6 @@ class _DriverDetailsState extends State<DriverDetails> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   Container(
                     width: MediaQuery.of(context).size.width,
                     child: Row(
@@ -343,24 +354,24 @@ class _DriverDetailsState extends State<DriverDetails> {
                         ),
                         Flexible(
                             child: Container(
-                              height: 100,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    from!,
-                                    style: TextStyle(
-                                        fontFamily: 'Arimo', color: Colors.grey),
-                                  ),
-                                  Text(
-                                    to!,
-                                    style: TextStyle(
-                                        fontFamily: 'Arimo', color: Colors.grey),
-                                  ),
-                                ],
+                          height: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                from!,
+                                style: TextStyle(
+                                    fontFamily: 'Arimo', color: Colors.grey),
                               ),
-                            )),
+                              Text(
+                                to!,
+                                style: TextStyle(
+                                    fontFamily: 'Arimo', color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        )),
                       ],
                     ),
                   ),
@@ -373,4 +384,3 @@ class _DriverDetailsState extends State<DriverDetails> {
     );
   }
 }
-

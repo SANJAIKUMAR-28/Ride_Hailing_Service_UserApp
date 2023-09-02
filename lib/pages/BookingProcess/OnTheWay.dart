@@ -1,7 +1,15 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:velocito/pages/BookingProcess/CancellationPage.dart';
 import 'package:velocito/pages/BookingProcess/RateDriver.dart';
+
+import '../../Models/user_model.dart';
 
 class OnTheWay extends StatefulWidget {
   final String payment;
@@ -12,6 +20,45 @@ class OnTheWay extends StatefulWidget {
 }
 
 class _OnTheWayState extends State<OnTheWay> {
+  DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Requests');
+  User? user=FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser=UserModel();
+  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late DatabaseReference _userRef;
+
+  String sts='';
+  String from='';
+  String to='';
+  String fromtime='';
+  String totime='';
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    _userRef = FirebaseDatabase.instance.ref().child('Requests');
+    _userRef.child(user!.uid).onValue.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        setState(() {
+          sts=data['TRIP-STATUS'];
+          from=data['FROM'];
+          to=data['TO'];
+          fromtime=data['FROM-TIME'];
+          totime=data['TO-TIME'];
+        });
+      }
+    });
+checksts();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,89 +164,9 @@ class _OnTheWayState extends State<OnTheWay> {
                             padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                             minWidth: MediaQuery.of(context).size.width,
                             onPressed: () async {
-                              showDialog(context: context, builder: (context) {
-                                return AlertDialog(
-                                      surfaceTintColor: Colors.white,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    content: Container(
-                                      height: 250,
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                          Image.asset('assets/cararrived.png',
-                                          height: 100,
-                                            width: 60,
-                                          ),
-                                        SizedBox(height: 20,),
-                                        Text('Your taxi has arrived',style: TextStyle(fontSize: 16,fontFamily: 'Arimo',fontWeight: FontWeight.bold),),
-                                        SizedBox(height: 20,),
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 5,right: 5),
-                                          child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children:[
-                                                SizedBox(
-                                                  width:100,
-                                                  child: Material(
-                                                    elevation: 2,
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color: Color.fromRGBO(255, 51, 51, 0.9),
-                                                    child: MaterialButton(
-                                                      padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                                                      minWidth: MediaQuery.of(context).size.width,
-                                                      onPressed: () async {
-                                                        Navigator.push(context,
-                                                            MaterialPageRoute(builder: (context) => RateDriver()));
-                                                      },
-                                                      child:  Text(
-                                                        "I\'m coming",
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontFamily: 'Arimo',
-                                                            color: Colors.white,
-                                                            fontWeight: FontWeight.bold),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 100,
-                                                  child: Material(
-                                                    elevation: 2,
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color: Colors.white,
-                                                    child: MaterialButton(
-                                                      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                                                      minWidth: MediaQuery.of(context).size.width,
-                                                      onPressed: () async {
-                                                        await FlutterPhoneDirectCaller.callNumber('7373994102');
-                                                      },
-                                                      child:  Text(
-                                                        "Call",
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontFamily: 'Arimo',
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.bold),
-                                                      ),
-                                                    ),
-
-                                                  ),
-                                                ),
-                                              ]
-                                          ),
-                                        ),
-                                      ],
-                                      ),
-                                    )
-                                );
-                              });
+                              Navigator.push(context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CancellationPage()));
                             },
                             child:  Text(
                               "Cancel booking",
@@ -252,12 +219,12 @@ class _OnTheWayState extends State<OnTheWay> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '18:45',
+                                fromtime,
                                 style: TextStyle(
                                   fontFamily: 'Arimo',
                                 ),
                               ),
-                              Text('19:00',
+                              Text(totime,
                                   style: TextStyle(
                                     fontFamily: 'Arimo',
                                   )),
@@ -304,12 +271,12 @@ class _OnTheWayState extends State<OnTheWay> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '59/Amman Street,Tirupur,641603',
+                                from,
                                 style: TextStyle(
                                     fontFamily: 'Arimo', color: Colors.grey),
                               ),
                               Text(
-                                'Bannari Amman Institute of Technology,Sathy',
+                                to,
                                 style: TextStyle(
                                     fontFamily: 'Arimo', color: Colors.grey),
                               ),
@@ -326,5 +293,98 @@ class _OnTheWayState extends State<OnTheWay> {
         ),
       ),
     );
+  }
+  checksts(){
+    Timer(Duration(seconds: 1), () async
+    {
+      if(sts=="ARRIVED"){
+        showDialog(context: context, builder: (context) {
+          return AlertDialog(
+              surfaceTintColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              content: Container(
+                height: 250,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/cararrived.png',
+                      height: 100,
+                      width: 60,
+                    ),
+                    SizedBox(height: 20,),
+                    Text('Your taxi has arrived',style: TextStyle(fontSize: 16,fontFamily: 'Arimo',fontWeight: FontWeight.bold),),
+                    SizedBox(height: 20,),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5,right: 5),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:[
+                            SizedBox(
+                              width:100,
+                              child: Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(15),
+                                color: Color.fromRGBO(255, 51, 51, 0.9),
+                                child: MaterialButton(
+                                  padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                                  minWidth: MediaQuery.of(context).size.width,
+                                  onPressed: () async {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => RateDriver()));
+                                  },
+                                  child:  Text(
+                                    "I\'m coming",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Arimo',
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 100,
+                              child: Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                                child: MaterialButton(
+                                  padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                  minWidth: MediaQuery.of(context).size.width,
+                                  onPressed: () async {
+                                    await FlutterPhoneDirectCaller.callNumber('7373994102');
+                                  },
+                                  child:  Text(
+                                    "Call",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Arimo',
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+
+                              ),
+                            ),
+                          ]
+                      ),
+                    ),
+                  ],
+                ),
+              )
+          );
+        });
+      }
+      else{
+        return checksts();
+      }
+    });
   }
 }

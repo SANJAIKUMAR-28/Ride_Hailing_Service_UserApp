@@ -19,10 +19,11 @@ class PaymentOption extends StatefulWidget {
 }
 
 class _PaymentOptionState extends State<PaymentOption> {
-  late Map<String,dynamic> paymentIntent;
-  User? user=FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser=UserModel();
-  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  late Map<String, dynamic> paymentIntent;
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  final CollectionReference ref =
+      FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
   void initState() {
     super.initState();
@@ -35,18 +36,19 @@ class _PaymentOptionState extends State<PaymentOption> {
       setState(() {});
     });
     _userRef = FirebaseDatabase.instance.ref().child('Requests');
-
   }
-  void makePayment() async{
-    try{
-      paymentIntent= await createPaymentIntent();
+
+  void makePayment() async {
+    try {
+      paymentIntent = await createPaymentIntent();
 
       var gpay = PaymentSheetGooglePay(
         merchantCountryCode: "US",
         currencyCode: "USD",
         testEnv: true,
       );
-      Stripe.instance.initPaymentSheet(paymentSheetParameters: SetupPaymentSheetParameters(
+      Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
         paymentIntentClientSecret: paymentIntent!["client_secret"],
         style: ThemeMode.dark,
         merchantDisplayName: "Velocito",
@@ -54,34 +56,35 @@ class _PaymentOptionState extends State<PaymentOption> {
       ));
 
       displayPaymentSheet();
-    } catch(e){
-
-    }
+    } catch (e) {}
   }
+
   void displayPaymentSheet() async {
-    try{
+    try {
       await Stripe.instance.presentPaymentSheet();
       print("done");
-    } catch(e){
+    } catch (e) {
       print("failed");
     }
   }
+
   createPaymentIntent() async {
-    try{
-      Map<String,dynamic> body={
-        "amount":"1000",
-        "currency":"INR",
+    try {
+      Map<String, dynamic> body = {
+        "amount": "1000",
+        "currency": "INR",
       };
 
-      http.Response response=await http.post(Uri.parse("https://api.stripe.com/v1/payment_intents"),
+      http.Response response = await http.post(
+          Uri.parse("https://api.stripe.com/v1/payment_intents"),
           body: body,
           headers: {
-            "Authorization":"Bearer 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",
-            "Content-type":"application/x-www-form-urlencoded"
-          }
-      );
+            "Authorization":
+                "Bearer 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",
+            "Content-type": "application/x-www-form-urlencoded"
+          });
       return json.decode(response.body);
-    }catch(e){
+    } catch (e) {
       throw Exception(e.toString());
     }
   }
@@ -205,7 +208,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 },
                                 child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(children: [
                                         SizedBox(
@@ -225,7 +228,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                               fontSize: 15,
                                               fontFamily: 'Arimo',
                                               color:
-                                              Color.fromRGBO(0, 0, 0, 0.60),
+                                                  Color.fromRGBO(0, 0, 0, 0.60),
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ]),
@@ -246,11 +249,11 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
                                 onPressed: () {
-                                Confirm('Cash');
+                                  Confirm('Cash');
                                 },
                                 child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(children: [
                                         SizedBox(
@@ -271,7 +274,7 @@ class _PaymentOptionState extends State<PaymentOption> {
                                               fontSize: 15,
                                               fontFamily: 'Arimo',
                                               color:
-                                              Color.fromRGBO(0, 0, 0, 0.60),
+                                                  Color.fromRGBO(0, 0, 0, 0.60),
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ]),
@@ -290,52 +293,89 @@ class _PaymentOptionState extends State<PaymentOption> {
           ),
         ]));
   }
-  Confirm (String paymentType){
 
-    showDialog(context: context, builder: (context) {
-      return AlertDialog(
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          content: Container(
-            height: 240,
-
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.check_circle,
-                  size: 95,
-                  color: Color.fromRGBO(255, 51, 51, 0.8),
+  Confirm(String paymentType) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              content: Container(
+                height: 240,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
                 ),
-                SizedBox(height: 5,),
-                Text('Booking Successfull',style: TextStyle(fontSize: 20,fontFamily: 'Arimo',fontWeight: FontWeight.bold),),
-                SizedBox(height: 10,),
-
-                Text('Your boooking has been confirmed',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(160, 160, 160, 1.0),fontSize: 12),),
-
-                Text('driver will pick you up soon',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(160, 160, 160, 1.0),fontSize: 12),),
-                SizedBox(height: 23,),
-                Divider(
-                  color: Colors.black12,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      size: 95,
+                      color: Color.fromRGBO(255, 51, 51, 0.8),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'Booking Successfull',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'Arimo',
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Your boooking has been confirmed',
+                      style: TextStyle(
+                          fontFamily: 'Arimo',
+                          color: Color.fromRGBO(160, 160, 160, 1.0),
+                          fontSize: 12),
+                    ),
+                    Text(
+                      'driver will pick you up soon',
+                      style: TextStyle(
+                          fontFamily: 'Arimo',
+                          color: Color.fromRGBO(160, 160, 160, 1.0),
+                          fontSize: 12),
+                    ),
+                    SizedBox(
+                      height: 23,
+                    ),
+                    Divider(
+                      color: Colors.black12,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _userRef
+                            .child(user!.uid)
+                            .update({'PAYMENT-TYPE': paymentType});
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OnTheWay(
+                                      payment: paymentType,
+                                    )));
+                      },
+                      child: Text(
+                        'Done',
+                        style: TextStyle(
+                            fontFamily: 'Arimo',
+                            color: Color.fromRGBO(255, 51, 51, 1.0),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
                 ),
-                SizedBox(height: 5,),
-                InkWell(
-                  onTap: (){
-                    _userRef.child(user!.uid).update({'PAYMENT-TYPE':paymentType});
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OnTheWay(payment: paymentType,)));
-                  },
-                  child: Text('Done',style: TextStyle(fontFamily: 'Arimo',color: Color.fromRGBO(255, 51, 51, 1.0),fontSize: 16,fontWeight: FontWeight.bold),),
-                )
-
-              ],
-            ),
-          )
-      );
-
-    });
+              ));
+        });
   }
 }

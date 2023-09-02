@@ -15,27 +15,34 @@ class _MobileLoginState extends State<MobileLogin> {
   final _formkey = GlobalKey<FormState>();
   final emailEditingController = new TextEditingController();
   bool loading = false;
-  final _auth=FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   String _verificationId = '';
 
   Future<void> verifyPhoneNumber() async {
-    final PhoneVerificationCompleted verified = (PhoneAuthCredential authResult) {
+    final PhoneVerificationCompleted verified =
+        (PhoneAuthCredential authResult) {
       _auth.signInWithCredential(authResult);
       // Perform any further actions upon successful verification
     };
-    final PhoneVerificationFailed verificationFailed = (
-        FirebaseAuthException authException) {
+    final PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException authException) {
       // Handle verification failure
       print('Verification failed: ${authException.message}');
     };
 
-    final PhoneCodeSent smsSent = (String verificationId, int? forceResendingToken) {
+    final PhoneCodeSent smsSent =
+        (String verificationId, int? forceResendingToken) {
       _verificationId = verificationId;
       // Navigate to OTP screen
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MobileOtp( verificationId: _verificationId, num: '+91 ${emailEditingController.text}', name: '', page: '1',),
+          builder: (context) => MobileOtp(
+            verificationId: _verificationId,
+            num: '+91 ${emailEditingController.text}',
+            name: '',
+            page: '1',
+          ),
         ),
       );
     };
@@ -53,14 +60,13 @@ class _MobileLoginState extends State<MobileLogin> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final phoneField = TextFormField(
       maxLength: 10,
       autofocus: false,
       controller: emailEditingController,
-      style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold),
+      style: TextStyle(fontFamily: 'Arimo', fontWeight: FontWeight.bold),
       keyboardType: TextInputType.number,
       validator: (value) {
         if (value!.isEmpty) {
@@ -86,19 +92,26 @@ class _MobileLoginState extends State<MobileLogin> {
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () async {
           setState(() {
-            loading=true;
+            loading = true;
           });
           verifyPhoneNumber();
         },
-        child:  loading? SizedBox( height:22,width: 22,child:CircularProgressIndicator(color: Colors.white,)):Text(
-          "Continue",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 17,
-              fontFamily: 'Arimo',
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
-        ),
+        child: loading
+            ? SizedBox(
+                height: 22,
+                width: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ))
+            : Text(
+                "Continue",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 17,
+                    fontFamily: 'Arimo',
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
       ),
     );
     return Scaffold(
@@ -130,39 +143,78 @@ class _MobileLoginState extends State<MobileLogin> {
                   SizedBox(
                     height: 25,
                   ),
-                  Text('Log in',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold,fontSize: 25),),
-                  SizedBox(height: 5,),
-                  Text('Please confirm your country code and \nenter your phone number.',style: TextStyle(fontFamily: 'Arimo',fontSize: 15),),
-                  SizedBox(height: 30,),
-                  Divider(color: Colors.grey,),
+                  Text(
+                    'Log in',
+                    style: TextStyle(
+                        fontFamily: 'Arimo',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    'Please confirm your country code and \nenter your phone number.',
+                    style: TextStyle(fontFamily: 'Arimo', fontSize: 15),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Image.asset("assets/ind.png",height: 20,width: 22,),
-                        SizedBox(width: 10,),
-                        Text('India',style: TextStyle(fontFamily: 'Arimo'),)
+                        Image.asset(
+                          "assets/ind.png",
+                          height: 20,
+                          width: 22,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'India',
+                          style: TextStyle(fontFamily: 'Arimo'),
+                        )
                       ],
                     ),
                   ),
-                  Divider(color: Colors.grey,),
+                  Divider(
+                    color: Colors.grey,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('+91',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold),),
-                      SizedBox(width: 10,),
-                      Container(height: 10,
-                      child: VerticalDivider(color: Colors.grey,),
+                      Text(
+                        '+91',
+                        style: TextStyle(
+                            fontFamily: 'Arimo', fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(width: 20,),
                       SizedBox(
-                          width: 150,
-                          child: phoneField)
+                        width: 10,
+                      ),
+                      Container(
+                        height: 10,
+                        child: VerticalDivider(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(width: 150, child: phoneField)
                     ],
                   ),
-                  Divider(color: Colors.grey,),
-                  SizedBox(height: 50,),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
                   loginButton,
                   SizedBox(height: 12),
                   Row(
@@ -196,13 +248,11 @@ class _MobileLoginState extends State<MobileLogin> {
       ),
     );
   }
-  void signIn(String email,String password) async
-  {
+
+  void signIn(String email, String password) async {
     setState(() {
       loading = true;
     });
-    if (_formkey.currentState!.validate()) {
-
-    }
+    if (_formkey.currentState!.validate()) {}
   }
 }

@@ -20,20 +20,36 @@ class _SelectOptionState extends State<SelectOption> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset("assets/phnemailimg.png",
-              height: 180,
+              Image.asset(
+                "assets/phnemailimg.png",
+                height: 180,
                 width: MediaQuery.of(context).size.width,
               ),
-              SizedBox(height: 20,),
-              Text('Make Connects\nwith Velocito',style: TextStyle(fontSize: 32,fontFamily: 'Arimo',fontWeight: FontWeight.bold),),
-              SizedBox(height: 5,),
-              Text('To your dream trip',style: TextStyle(fontSize: 20,fontFamily: 'Arimo'),),
-              SizedBox(height: 30,),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Make Connects\nwith Velocito',
+                style: TextStyle(
+                    fontSize: 32,
+                    fontFamily: 'Arimo',
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                'To your dream trip',
+                style: TextStyle(fontSize: 20, fontFamily: 'Arimo'),
+              ),
+              SizedBox(
+                height: 30,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: SizedBox(
                   height: 60,
-                  width:MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width,
                   child: Material(
                     elevation: 2,
                     borderRadius: BorderRadius.circular(15),
@@ -42,10 +58,12 @@ class _SelectOptionState extends State<SelectOption> {
                       padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
                       minWidth: MediaQuery.of(context).size.width,
                       onPressed: () async {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => MobileLogin()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MobileLogin()));
                       },
-                      child:  Text(
+                      child: Text(
                         "Login in with mobile no",
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -58,9 +76,11 @@ class _SelectOptionState extends State<SelectOption> {
                   ),
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: SizedBox(
                   height: 60,
                   width: MediaQuery.of(context).size.width,
@@ -75,17 +95,16 @@ class _SelectOptionState extends State<SelectOption> {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Login()));
                       },
-                      child:  Text(
+                      child: Text(
                         "Login with email ID",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'Arimo',
-                            color:Color.fromRGBO(255, 51, 51, 0.9),
+                            color: Color.fromRGBO(255, 51, 51, 0.9),
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-
                   ),
                 ),
               ),

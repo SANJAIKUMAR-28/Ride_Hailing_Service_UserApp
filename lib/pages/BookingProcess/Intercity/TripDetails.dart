@@ -24,17 +24,30 @@ class TripDetails extends StatefulWidget {
   final String returntime;
   final String adult;
   final String child;
-  const TripDetails({super.key, required this.from, required this.to, required this.trip, required this.vec, required this.deptdate, required this.depttime, required this.returndate, required this.returntime, required this.adult, required this.child});
+  const TripDetails(
+      {super.key,
+      required this.from,
+      required this.to,
+      required this.trip,
+      required this.vec,
+      required this.deptdate,
+      required this.depttime,
+      required this.returndate,
+      required this.returntime,
+      required this.adult,
+      required this.child});
 
   @override
   State<TripDetails> createState() => _TripDetailsState();
 }
 
 class _TripDetailsState extends State<TripDetails> {
-  DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('IntercityRequests');
-  User? user=FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser=UserModel();
-  final CollectionReference ref = FirebaseFirestore.instance.collection("users");
+  DatabaseReference dbRef =
+      FirebaseDatabase.instance.ref().child('IntercityRequests');
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  final CollectionReference ref =
+      FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
   String? sts;
   late String date;
@@ -43,7 +56,7 @@ class _TripDetailsState extends State<TripDetails> {
   @override
   void initState() {
     super.initState();
-    String est='24';
+    String est = '24';
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -59,13 +72,12 @@ class _TripDetailsState extends State<TripDetails> {
       if (snapshot.value != null) {
         final data = Map<String, dynamic>.from(snapshot.value as dynamic);
         setState(() {
-          sts= data['STATUS'];
+          sts = data['STATUS'];
         });
       }
     });
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,9 +106,7 @@ class _TripDetailsState extends State<TripDetails> {
                   clipBehavior: Clip.none,
                   scrollDirection: Axis.vertical,
                   child: Column(
-                    children: [
-                      Image.asset('assets/map.png')
-                    ],
+                    children: [Image.asset('assets/map.png')],
                   ),
                 ),
               ),
@@ -104,22 +114,17 @@ class _TripDetailsState extends State<TripDetails> {
                 width: MediaQuery.of(context).size.width,
                 height: 450,
                 child: Selection(),
-
               ),
-
             ],
           ),
-
-        ])
-    );
-
+        ]));
   }
+
   Material Selection() {
     return Material(
         elevation: 5,
         borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20)),
+            topRight: Radius.circular(20), topLeft: Radius.circular(20)),
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -136,9 +141,7 @@ class _TripDetailsState extends State<TripDetails> {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
-                    onPressed: () {
-
-                    },
+                    onPressed: () {},
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -147,68 +150,103 @@ class _TripDetailsState extends State<TripDetails> {
                           children: [
                             Text(''),
                             InkWell(
-                              onTap: (){
-
-                              },
-                              child:
-                              Text('Change',style: TextStyle(fontFamily: 'Arimo',color:Color.fromRGBO(255, 51, 51, 0.8),fontSize: 12,fontWeight: FontWeight.bold),),)
+                              onTap: () {},
+                              child: Text(
+                                'Change',
+                                style: TextStyle(
+                                    fontFamily: 'Arimo',
+                                    color: Color.fromRGBO(255, 51, 51, 0.8),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
                           ],
                         ),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Image.asset(
-                                      (widget.vec=="Sedan")?
-                                      "assets/taxi4.png":"assets/taxi7.png",
-                                      height: 50,
-                                      width: 80,
-
-                                    ),
-                                  ]),
-                              Row(
-                                  children:[
-                                    Text('Total cost : ',style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'Arimo',
-                                        color:
-                                        Colors.black,
-                                        fontWeight: FontWeight.bold),),
-                                    Icon(LineIcons.indianRupeeSign,size: 13,color: Colors.black,),
-                                    SizedBox(width: 2,),
-                                    Text(cost(),style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'Arimo',
-                                        color:
-                                        Colors.black,
-                                        fontWeight: FontWeight.bold),),
-                                  ]
-                              ),
-
+                              Row(children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Image.asset(
+                                  (widget.vec == "Sedan")
+                                      ? "assets/taxi4.png"
+                                      : "assets/taxi7.png",
+                                  height: 50,
+                                  width: 80,
+                                ),
+                              ]),
+                              Row(children: [
+                                Text(
+                                  'Total cost : ',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Arimo',
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Icon(
+                                  LineIcons.indianRupeeSign,
+                                  size: 13,
+                                  color: Colors.black,
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  cost(),
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Arimo',
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
                             ]),
-                        SizedBox(height: 5,),
+                        SizedBox(
+                          height: 5,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('${widget.vec}',style: TextStyle(fontFamily: 'Arimo',),),
+                            Text(
+                              '${widget.vec}',
+                              style: TextStyle(
+                                fontFamily: 'Arimo',
+                              ),
+                            ),
                             Container(
                               height: 20,
                               child: VerticalDivider(
                                 color: Color.fromRGBO(255, 51, 51, 0.8),
                               ),
                             ),
-                            Row(children: [
-                              Icon(Icons.person,color: Colors.black,),
-                              SizedBox(width: 5,),
-                              (widget.vec=='Sedan')?
-                              Text('4 seats',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold),): Text('7 seats',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold),)
-                            ],),
-
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Colors.black,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                (widget.vec == 'Sedan')
+                                    ? Text(
+                                        '4 seats',
+                                        style: TextStyle(
+                                            fontFamily: 'Arimo',
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : Text(
+                                        '7 seats',
+                                        style: TextStyle(
+                                            fontFamily: 'Arimo',
+                                            fontWeight: FontWeight.bold),
+                                      )
+                              ],
+                            ),
                             Container(
                               height: 20,
                               child: VerticalDivider(
@@ -219,8 +257,14 @@ class _TripDetailsState extends State<TripDetails> {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.grey,
                               child: Padding(
-                                padding: EdgeInsets.only(left: 5,right: 5),
-                                child: Text('3 mins',style: TextStyle(fontFamily: 'Arimo',color: Colors.white,fontWeight: FontWeight.bold),),
+                                padding: EdgeInsets.only(left: 5, right: 5),
+                                child: Text(
+                                  '3 mins',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ],
@@ -228,13 +272,23 @@ class _TripDetailsState extends State<TripDetails> {
                       ],
                     ),
                   )),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Booking details',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold,fontSize: 16),),
-                  SizedBox(height: 10,),
+                  Text(
+                    'Booking details',
+                    style: TextStyle(
+                        fontFamily: 'Arimo',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     children: [
                       Container(
@@ -242,16 +296,37 @@ class _TripDetailsState extends State<TripDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('From',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                            Text(': ',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
+                            Text(
+                              'From',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
+                            Text(
+                              ': ',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
                           ],
                         ),
                       ),
                       Flexible(
-                          child: Text(widget.from,style:TextStyle(fontFamily: 'Arimo',color:Colors.grey,fontWeight: FontWeight.w500,fontSize: 12) ,)),
+                          child: Text(
+                        widget.from,
+                        style: TextStyle(
+                            fontFamily: 'Arimo',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12),
+                      )),
                     ],
                   ),
-                  SizedBox(height: 5,),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Row(
                     children: [
                       Container(
@@ -259,53 +334,38 @@ class _TripDetailsState extends State<TripDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('To',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                            Text(': ',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                          ],
-                        ),
-                      ),
-                      Flexible(child: Text(widget.to,style:TextStyle(fontFamily: 'Arimo',color:Colors.grey,fontWeight: FontWeight.w500,fontSize: 12) ,),)
-                    ],
-                  ),
-                  SizedBox(height: 5,),
-                  Row(
-                    children: [
-                      Container(
-                        width: 160,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Departure Date & Time',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                            Text(': ',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                          ],
-                        ),
-                      ),
-                      Text('${widget.deptdate} - ${widget.depttime}',style:TextStyle(fontFamily: 'Arimo',color:Colors.grey,fontWeight: FontWeight.w500,fontSize: 12) ,),
-                    ],
-                  ),
-                  if(widget.returndate!='')
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 5,),
-                      Row(
-                        children: [
-                          Container(
-                            width: 160,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Return Date & Time',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                                Text(': ',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                              ],
+                            Text(
+                              'To',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
                             ),
-                          ),
-                          Text('${widget.returndate} - ${widget.returntime}',style:TextStyle(fontFamily: 'Arimo',color:Colors.grey,fontWeight: FontWeight.w500,fontSize: 12) ,),
-                        ],
+                            Text(
+                              ': ',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
+                          ],
+                        ),
                       ),
+                      Flexible(
+                        child: Text(
+                          widget.to,
+                          style: TextStyle(
+                              fontFamily: 'Arimo',
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12),
+                        ),
+                      )
                     ],
                   ),
-                  SizedBox(height: 5,),
+                  SizedBox(
+                    height: 5,
+                  ),
                   Row(
                     children: [
                       Container(
@@ -313,20 +373,134 @@ class _TripDetailsState extends State<TripDetails> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Travellers',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
-                            Text(': ',style:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w700,fontSize: 12) ,),
+                            Text(
+                              'Departure Date & Time',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
+                            Text(
+                              ': ',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
                           ],
                         ),
                       ),
-                      Text('${widget.adult} Adults ${widget.child} Children',style:TextStyle(fontFamily: 'Arimo',color:Colors.grey,fontWeight: FontWeight.w500,fontSize: 12) ,),
+                      Text(
+                        '${widget.deptdate} - ${widget.depttime}',
+                        style: TextStyle(
+                            fontFamily: 'Arimo',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 10,),
-                  Text('Estimated trip time',style: TextStyle(fontFamily: 'Arimo',color: Colors.grey,fontSize: 13),),
-                  Text('24 min',style: TextStyle(fontFamily: 'Arimo',color:Color.fromRGBO(255, 51, 51, 0.8),fontSize: 13),)
+                  if (widget.returndate != '')
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              width: 160,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Return Date & Time',
+                                    style: TextStyle(
+                                        fontFamily: 'Arimo',
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12),
+                                  ),
+                                  Text(
+                                    ': ',
+                                    style: TextStyle(
+                                        fontFamily: 'Arimo',
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '${widget.returndate} - ${widget.returntime}',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 160,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Travellers',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
+                            Text(
+                              ': ',
+                              style: TextStyle(
+                                  fontFamily: 'Arimo',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '${widget.adult} Adults ${widget.child} Children',
+                        style: TextStyle(
+                            fontFamily: 'Arimo',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Estimated trip time',
+                    style: TextStyle(
+                        fontFamily: 'Arimo', color: Colors.grey, fontSize: 13),
+                  ),
+                  Text(
+                    '24 min',
+                    style: TextStyle(
+                        fontFamily: 'Arimo',
+                        color: Color.fromRGBO(255, 51, 51, 0.8),
+                        fontSize: 13),
+                  )
                 ],
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               Material(
                 borderRadius: BorderRadius.circular(15),
                 elevation: 2,
@@ -336,30 +510,29 @@ class _TripDetailsState extends State<TripDetails> {
                   minWidth: MediaQuery.of(context).size.width,
                   onPressed: () async {
                     Map<String, String> Requests = {
-                      'FROM':widget.from,
-                      'TO':widget.to,
-                      'VEHICLE':widget.vec,
-                      'TRIP-TYPE':widget.trip,
-                      'COST':cost(),
+                      'FROM': widget.from,
+                      'TO': widget.to,
+                      'VEHICLE': widget.vec,
+                      'TRIP-TYPE': widget.trip,
+                      'COST': cost(),
                       'PASSENGER-NAME': '${loggedInUser.name}',
-                      'PASSENGER-NUMBER':'${loggedInUser.phoneno}',
-                      'PASSENGER-ID':'${loggedInUser.uid}',
-                      'STATUS':'REQUESTED',
-                      'CHILD':widget.child,
-                      'ADULTS':widget.adult,
-                      'DEPARTURE-TIME':widget.depttime,
-                      'DEPARTURE-DATE':widget.deptdate,
-                      'RETURN-DATE':widget.returndate,
-                      'RETURN-TIME':widget.returntime,
+                      'PASSENGER-NUMBER': '${loggedInUser.phoneno}',
+                      'PASSENGER-ID': '${loggedInUser.uid}',
+                      'STATUS': 'REQUESTED',
+                      'CHILD': widget.child,
+                      'ADULTS': widget.adult,
+                      'DEPARTURE-TIME': widget.depttime,
+                      'DEPARTURE-DATE': widget.deptdate,
+                      'RETURN-DATE': widget.returndate,
+                      'RETURN-TIME': widget.returntime,
                     };
                     dbRef.push().set(Requests);
-                    Fluttertoast.showToast(msg: "Cab requested, check for status");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HomeScreen()));
+                    Fluttertoast.showToast(
+                        msg: "Cab requested, check for status");
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
-                  child:  Text(
+                  child: Text(
                     "Book",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -374,14 +547,18 @@ class _TripDetailsState extends State<TripDetails> {
           ),
         ));
   }
-String cost(){
-    double fare=0;
-    if(widget.vec=='Sedan'){
-      fare=200+(10.37*(double.parse(widget.adult))+10.37*(double.parse(widget.child)));
-    }
-    else{
-      fare=400+(10.37*(double.parse(widget.adult))+10.37*(double.parse(widget.child)));
+
+  String cost() {
+    double fare = 0;
+    if (widget.vec == 'Sedan') {
+      fare = 200 +
+          (10.37 * (double.parse(widget.adult)) +
+              10.37 * (double.parse(widget.child)));
+    } else {
+      fare = 400 +
+          (10.37 * (double.parse(widget.adult)) +
+              10.37 * (double.parse(widget.child)));
     }
     return fare.toString();
-}
+  }
 }

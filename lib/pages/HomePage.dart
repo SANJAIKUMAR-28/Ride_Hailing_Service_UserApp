@@ -37,7 +37,6 @@ class _HomePageState extends State<HomePage> {
       });
       //_location();
     });
-
   }
 
   void getLocation() async {
@@ -251,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                       InkWell(
                         highlightColor: Colors.transparent,
                         splashColor: Colors.transparent,
-                        onTap: (){
+                        onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -317,18 +316,29 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ]),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child:Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      CarMateril('Easy drive,\nLocal vibes delight.','assets/fcar.png'),
-                      SizedBox(width: 10,),
-                      CarMateril('Effortless journey,\nCity to City.','assets/scar.png'),
-                      SizedBox(width: 10,),
-                      CarMateril('Work to wheels,\nSeamless transition.','assets/tcar.png'),
-                      SizedBox(width: 10,),
+                      CarMateril('Easy drive,\nLocal vibes delight.',
+                          'assets/fcar.png'),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      CarMateril('Effortless journey,\nCity to City.',
+                          'assets/scar.png'),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      CarMateril('Work to wheels,\nSeamless transition.',
+                          'assets/tcar.png'),
+                      SizedBox(
+                        width: 10,
+                      ),
                     ],
                   ),
                 ),
@@ -439,7 +449,8 @@ class _HomePageState extends State<HomePage> {
               ));
         });
   }
-  SizedBox CarMateril(String Quote,String asset){
+
+  SizedBox CarMateril(String Quote, String asset) {
     return SizedBox(
       height: 200,
       width: 150,
@@ -450,28 +461,36 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(asset,
+            Image.asset(
+              asset,
               height: 120,
-              width: 150,),
-            Text(Quote,style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold,color: Colors.white),)
+              width: 150,
+            ),
+            Text(
+              Quote,
+              style: TextStyle(
+                  fontFamily: 'Arimo',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            )
           ],
         ),
       ),
     );
   }
-  String greetings(){
-    String greeting ='';
-    DateTime dateTime=DateTime.now();
-    String hour= "${dateTime.hour}";
-    if(int.parse(hour)>0&&int.parse(hour)<=11){
-      greeting="Good Morning";
-    }else if(int.parse(hour)>=12&&int.parse(hour)<16){
-      greeting="Good Afternoon";
-    }
-    else if(int.parse(hour)>=16&&int.parse(hour)<19){
-      greeting="Good Evening";
-    }else if(int.parse(hour)>=19&&int.parse(hour)<=23){
-      greeting="Good Night";
+
+  String greetings() {
+    String greeting = '';
+    DateTime dateTime = DateTime.now();
+    String hour = "${dateTime.hour}";
+    if (int.parse(hour) > 0 && int.parse(hour) <= 11) {
+      greeting = "Good Morning";
+    } else if (int.parse(hour) >= 12 && int.parse(hour) < 16) {
+      greeting = "Good Afternoon";
+    } else if (int.parse(hour) >= 16 && int.parse(hour) < 19) {
+      greeting = "Good Evening";
+    } else if (int.parse(hour) >= 19 && int.parse(hour) <= 23) {
+      greeting = "Good Night";
     }
     return greeting;
   }

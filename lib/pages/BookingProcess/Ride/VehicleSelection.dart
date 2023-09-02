@@ -13,7 +13,8 @@ class VehicleSelection extends StatefulWidget {
   final String from;
   final String to;
   final String distbtw;
-  const VehicleSelection({super.key, required this.from, required this.to, required this.distbtw});
+  const VehicleSelection(
+      {super.key, required this.from, required this.to, required this.distbtw});
 
   @override
   State<VehicleSelection> createState() => _VehicleSelectionState();
@@ -26,7 +27,8 @@ class _VehicleSelectionState extends State<VehicleSelection> {
   );
   late String _mapStyle;
   late GoogleMapController mapController;
-  static const CameraPosition initialPosition = CameraPosition(target: LatLng(31.51110801, 74.27774), zoom: 14);
+  static const CameraPosition initialPosition =
+      CameraPosition(target: LatLng(31.51110801, 74.27774), zoom: 14);
 
   final Completer<GoogleMapController> _controller = Completer();
 
@@ -41,13 +43,14 @@ class _VehicleSelectionState extends State<VehicleSelection> {
   PolylineResponse polylineResponse = PolylineResponse();
 
   Set<Polyline> polylinePoints = {};
-  void initstate(){
+  void initstate() {
     super.initState();
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
     });
     drawPolyline();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,57 +79,80 @@ class _VehicleSelectionState extends State<VehicleSelection> {
             },
           ),
           Positioned(
-              bottom: 0,
-              child:
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 300,
-            child: Material(
-                elevation: 5,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    topLeft: Radius.circular(20)),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      vehicle('assets/auto.png','VC Auto',farecalc('Auto',widget.distbtw),'0.67 km','3',widget.distbtw),
-                      Divider(
-                        indent: 10,
-                        endIndent: 10,
-                        thickness: 0.5,
-                      ),
-                      vehicle('assets/bike.png','VC Bike',farecalc('Bike',widget.distbtw),'0.79 km','1',widget.distbtw),
-                      Divider(
-                        indent: 10,
-                        endIndent: 10,
-                        thickness: 0.5,
-                      ),
-                      vehicle('assets/taxi4.png','VC Taxi 4 seats',farecalc('Car4',widget.distbtw),'0.5 km','4',widget.distbtw),
-                      Divider(
-                        indent: 10,
-                        endIndent: 10,
-                        thickness: 0.5,
-                      ),
-                      vehicle('assets/taxi7.png','VC Taxi 7 seats',farecalc('Car7',widget.distbtw),'1.67 km','7',widget.distbtw),
-                      Divider(
-                        indent: 10,
-                        endIndent: 10,
-                        thickness: 0.5,
-                      )
-
-                    ],
-                  ),
-                )),
-          ),
+            bottom: 0,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              child: Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20)),
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        vehicle(
+                            'assets/auto.png',
+                            'VC Auto',
+                            farecalc('Auto', widget.distbtw),
+                            '0.67 km',
+                            '3',
+                            widget.distbtw),
+                        Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          thickness: 0.5,
+                        ),
+                        vehicle(
+                            'assets/bike.png',
+                            'VC Bike',
+                            farecalc('Bike', widget.distbtw),
+                            '0.79 km',
+                            '1',
+                            widget.distbtw),
+                        Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          thickness: 0.5,
+                        ),
+                        vehicle(
+                            'assets/taxi4.png',
+                            'VC Taxi 4 seats',
+                            farecalc('Car4', widget.distbtw),
+                            '0.5 km',
+                            '4',
+                            widget.distbtw),
+                        Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          thickness: 0.5,
+                        ),
+                        vehicle(
+                            'assets/taxi7.png',
+                            'VC Taxi 7 seats',
+                            farecalc('Car7', widget.distbtw),
+                            '1.67 km',
+                            '7',
+                            widget.distbtw),
+                        Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          thickness: 0.5,
+                        )
+                      ],
+                    ),
+                  )),
+            ),
           ),
         ]));
   }
 
-  Material vehicle(String asset,String name,String price,String dist,String seats,String distbtw){
+  Material vehicle(String asset, String name, String price, String dist,
+      String seats, String distbtw) {
     return Material(
         elevation: 0,
         borderRadius: BorderRadius.circular(10),
@@ -136,74 +162,92 @@ class _VehicleSelectionState extends State<VehicleSelection> {
           highlightColor: Colors.transparent,
           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RideOptions(img: asset, cost: price, vec: name, seats: seats, time: '3', from: widget.from, to: widget.to, dist: dist, distbtw: distbtw,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RideOptions(
+                          img: asset,
+                          cost: price,
+                          vec: name,
+                          seats: seats,
+                          time: '3',
+                          from: widget.from,
+                          to: widget.to,
+                          dist: dist,
+                          distbtw: distbtw,
+                        )));
           },
-          child: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Row(children: [
+              SizedBox(
+                width: 10,
+              ),
+              Image.asset(
+                "${asset}",
+                height: 27,
+                width: 50,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                "${name}",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: 'Arimo',
+                    color: Color.fromRGBO(0, 0, 0, 0.60),
+                    fontWeight: FontWeight.bold),
+              ),
+            ]),
+            Column(
               children: [
-                Row(children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Image.asset(
-                    "${asset}",
-                    height: 27,
-                    width: 50,
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  Icon(
+                    LineIcons.indianRupeeSign,
+                    size: 13,
+                    color: Colors.black,
                   ),
                   SizedBox(
-                    width: 10,
+                    width: 2,
                   ),
                   Text(
-                    "${name}",
-                    textAlign: TextAlign.center,
+                    '${price}',
                     style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontFamily: 'Arimo',
-                        color:
-                        Color.fromRGBO(0, 0, 0, 0.60),
+                        color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
                 ]),
-                Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children:[
-                        Icon(LineIcons.indianRupeeSign,size: 13,color: Colors.black,),
-                    SizedBox(width: 2,),
-                    Text('${price}',style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Arimo',
-                        color:
-                        Colors.black,
-                        fontWeight: FontWeight.bold),),
-                    ]
-                    ),
-                    Text('${dist}',style: TextStyle(
-                        fontSize: 12,
-                        fontFamily: 'Arimo',
-                        color:
-                        Color.fromRGBO(0, 0, 0, 0.60),
-                        ),),
-                  ],
-                )
-              ]),
+                Text(
+                  '${dist}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Arimo',
+                    color: Color.fromRGBO(0, 0, 0, 0.60),
+                  ),
+                ),
+              ],
+            )
+          ]),
         ));
   }
+
   void drawPolyline() async {
-    var response = await http.post(Uri.parse("https://maps.googleapis.com/maps/api/directions/json?key=" +
-        apiKey +
-        "&units=metric&origin=" +
-        origin.latitude.toString() +
-        "," +
-        origin.longitude.toString() +
-        "&destination=" +
-        destination.latitude.toString() +
-        "," +
-        destination.longitude.toString() +
-        "&mode=driving"));
+    var response = await http.post(Uri.parse(
+        "https://maps.googleapis.com/maps/api/directions/json?key=" +
+            apiKey +
+            "&units=metric&origin=" +
+            origin.latitude.toString() +
+            "," +
+            origin.longitude.toString() +
+            "&destination=" +
+            destination.latitude.toString() +
+            "," +
+            destination.longitude.toString() +
+            "&mode=driving"));
 
     print(response.body);
 
@@ -212,30 +256,45 @@ class _VehicleSelectionState extends State<VehicleSelection> {
     totalDistance = polylineResponse.routes![0].legs![0].distance!.text!;
     totalTime = polylineResponse.routes![0].legs![0].duration!.text!;
 
-    for (int i = 0; i < polylineResponse.routes![0].legs![0].steps!.length; i++) {
-      polylinePoints.add(Polyline(polylineId: PolylineId(polylineResponse.routes![0].legs![0].steps![i].polyline!.points!), points: [
-        LatLng(
-            polylineResponse.routes![0].legs![0].steps![i].startLocation!.lat!, polylineResponse.routes![0].legs![0].steps![i].startLocation!.lng!),
-        LatLng(polylineResponse.routes![0].legs![0].steps![i].endLocation!.lat!, polylineResponse.routes![0].legs![0].steps![i].endLocation!.lng!),
-      ],width: 3,color: Colors.red));
+    for (int i = 0;
+        i < polylineResponse.routes![0].legs![0].steps!.length;
+        i++) {
+      polylinePoints.add(Polyline(
+          polylineId: PolylineId(
+              polylineResponse.routes![0].legs![0].steps![i].polyline!.points!),
+          points: [
+            LatLng(
+                polylineResponse
+                    .routes![0].legs![0].steps![i].startLocation!.lat!,
+                polylineResponse
+                    .routes![0].legs![0].steps![i].startLocation!.lng!),
+            LatLng(
+                polylineResponse
+                    .routes![0].legs![0].steps![i].endLocation!.lat!,
+                polylineResponse
+                    .routes![0].legs![0].steps![i].endLocation!.lng!),
+          ],
+          width: 3,
+          color: Colors.red));
     }
 
     setState(() {});
   }
-String farecalc(String vec,String dist){
-    double fare=0;
-    if(vec=='Auto'){
-      fare = 20+(double.parse(dist)*10);
+
+  String farecalc(String vec, String dist) {
+    double fare = 0;
+    if (vec == 'Auto') {
+      fare = 20 + (double.parse(dist) * 10);
     }
-    if(vec=='Bike'){
-      fare = 10+(double.parse(dist)*5);
+    if (vec == 'Bike') {
+      fare = 10 + (double.parse(dist) * 5);
     }
-    if(vec=='Car4'){
-      fare = 30+(double.parse(dist)*15);
+    if (vec == 'Car4') {
+      fare = 30 + (double.parse(dist) * 15);
     }
-    if(vec=='Car7'){
-      fare = 40+(double.parse(dist)*20);
+    if (vec == 'Car7') {
+      fare = 40 + (double.parse(dist) * 20);
     }
     return fare.toStringAsFixed(2);
-}
+  }
 }
