@@ -311,6 +311,8 @@ class _RideOptionsState extends State<RideOptions> {
                     Map<String, String> Requests = {
                       'FROM': widget.from,
                       'TO': widget.to,
+                      'FROM-LATLON':widget.fromlatlon,
+                      'TO-LATLON':widget.tolatlon,
                       'VEHICLE': widget.vec,
                       'COST': widget.cost,
                       'PASSENGER-NAME': '${loggedInUser.name}',
