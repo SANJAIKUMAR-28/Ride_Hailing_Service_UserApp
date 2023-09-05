@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:velocito/LoginSignup/Login.dart';
+import 'package:velocito/LoginSignup/SelectOption.dart';
 
 class splash extends StatefulWidget {
   const splash({super.key});
@@ -17,7 +18,7 @@ class _splashState extends State<splash> {
     super.initState();
 
     Timer(Duration(seconds: 3), () =>
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login())));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SelectOption())));
   }
   @override
   Widget build(BuildContext context) {

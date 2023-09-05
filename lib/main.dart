@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
             }
             if(snapshot.connectionState==ConnectionState.active){
               if(snapshot.data==null){
-                return SelectOption();
+                return splash();
               }
               else{
                 return HomeScreen();

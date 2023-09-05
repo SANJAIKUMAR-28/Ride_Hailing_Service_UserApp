@@ -48,14 +48,15 @@ dependencies:
   email_otp: ^2.0.1
   package_info_plus: ^4.1.0
   flutter_phone_direct_caller: ^2.1.1
-  google_maps_flutter: ^2.4.0
-  flutter_google_places: ^0.3.0
-  google_maps_webservice: ^0.0.19
   flutter_stripe: ^9.3.0
   lottie: ^2.6.0
   intl: ^0.17.0
-  mapbox_gl: ^0.16.0
-  http:
+  location: ^5.0.3
+  geocoding: ^2.1.0
+  latlong2: ^0.9.0
+  flutter_typeahead: ^4.6.2
+  flutter_map: ^5.0.0
+  http: ^1.1.0
 
 
 dev_dependencies:
@@ -68,6 +69,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+dependency_overrides:
+  http: ^0.13.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -115,6 +118,7 @@ flutter:
     - assets/loadcar.png
     - assets/phnemailimg.png
     - assets/ind.png
+    - assets/marker.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

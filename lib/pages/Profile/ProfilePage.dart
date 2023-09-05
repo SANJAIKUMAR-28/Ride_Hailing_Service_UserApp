@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/LoginSignup/MobileLogin.dart';
 import 'package:velocito/LoginSignup/SelectOption.dart';
-import 'package:velocito/Maps/InitialMap.dart';
 import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
@@ -524,10 +523,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => InitialMap()));
+
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -20,6 +20,9 @@ class RideOptions extends StatefulWidget {
   final String to;
   final String dist;
   final String distbtw;
+  final String duration;
+  final String fromlatlon;
+  final String tolatlon;
   const RideOptions(
       {super.key,
       required this.img,
@@ -30,7 +33,7 @@ class RideOptions extends StatefulWidget {
       required this.from,
       required this.to,
       required this.dist,
-      required this.distbtw});
+      required this.distbtw, required this.duration, required this.fromlatlon, required this.tolatlon});
 
   @override
   State<RideOptions> createState() => _RideOptionsState();
@@ -56,7 +59,7 @@ class _RideOptionsState extends State<RideOptions> {
     String year = "${dateTime.year}";
     date = datefunc(day, month, year);
     fromtime = "${dateTime.hour}:${dateTime.minute}";
-    String est = '24';
+    String est = duration(widget.duration);
     totime = TimeEstimation(fromtime, est);
     FirebaseFirestore.instance
         .collection("users")
@@ -158,7 +161,7 @@ class _RideOptionsState extends State<RideOptions> {
                                         builder: (context) => VehicleSelection(
                                               from: widget.from,
                                               to: widget.to,
-                                              distbtw: widget.distbtw,
+                                              distbtw: widget.distbtw, duration: widget.duration, fromlatlon: widget.fromlatlon, tolatlon: widget.tolatlon,
                                             )));
                               },
                               child: Text(
@@ -286,7 +289,7 @@ class _RideOptionsState extends State<RideOptions> {
                         fontFamily: 'Arimo', color: Colors.grey, fontSize: 13),
                   ),
                   Text(
-                    ' 24 min',
+                    ' ${widget.duration}',
                     style: TextStyle(
                         fontFamily: 'Arimo',
                         color: Color.fromRGBO(255, 51, 51, 0.8),
@@ -441,5 +444,15 @@ class _RideOptionsState extends State<RideOptions> {
           (int.parse(min) + int.parse(est)).toString();
     }
     return estimatedTime;
+  }
+  String duration(String duration){
+    String est='';
+    int hrindex= duration.indexOf('h');
+    int minindex=duration.indexOf(' ')+1;
+    int minindex2=duration.indexOf('m');
+    int hr = int.parse(duration.substring(0,hrindex));
+    int min = int.parse(duration.substring(minindex,minindex2));
+    int esttime=(hr*60)+min;
+    return esttime.toString();
   }
 }
