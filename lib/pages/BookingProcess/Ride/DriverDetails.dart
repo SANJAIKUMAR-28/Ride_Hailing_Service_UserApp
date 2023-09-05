@@ -359,15 +359,25 @@ class _DriverDetailsState extends State<DriverDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                from!,
-                                style: TextStyle(
-                                    fontFamily: 'Arimo', color: Colors.grey),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection:Axis.vertical,
+                                  child: Text(
+                                    from!,
+                                    style: TextStyle(
+                                        fontFamily: 'Arimo', color: Colors.grey),
+                                  ),
+                                ),
                               ),
-                              Text(
-                                to!,
-                                style: TextStyle(
-                                    fontFamily: 'Arimo', color: Colors.grey),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection:Axis.vertical,
+                                  child: Text(
+                                    to!,
+                                    style: TextStyle(
+                                        fontFamily: 'Arimo', color: Colors.grey),
+                                  ),
+                                ),
                               ),
                             ],
                           ),

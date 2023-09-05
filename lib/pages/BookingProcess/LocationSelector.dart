@@ -1,10 +1,13 @@
+import 'dart:convert';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:velocito/Maps/InitialMap.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:location/location.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
+import 'package:http/http.dart' as http;
 
 import 'Ride/DriverDetails.dart';
 
@@ -16,116 +19,163 @@ class LocationSelector extends StatefulWidget {
 }
 
 class _LocationSelectorState extends State<LocationSelector> {
-  final fromcontroller = new TextEditingController();
-  final tocontroller = new TextEditingController();
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(11.497452335156774, 77.2769906825176),
-    zoom: 14.4746,
-  );
-  late String _mapStyle;
-  late GoogleMapController mapController;
-  Future<String> ShowPlaces() async {
-    const kGoogleApiKey = "AIzaSyB5DetvY563NyKXiVeydE1spiQgSAg1zrk";
-
-    Prediction? p = await PlacesAutocomplete.show(
-      context: context,
-      apiKey: kGoogleApiKey,
-      offset: 0,
-      radius: 1000,
-      types: ["(cities)"],
-      region: "us",
-      strictbounds: false,
-      mode: Mode.overlay,
-      language: "en",
-      decoration: InputDecoration(
-        hintText: 'Search location',
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-      ),
-      components: [Component(Component.country, "us")],
-    );
-    return "Hi";
-  }
+  LatLng? startLocation;
+  LatLng? endLocation;
+  String routeDistance='';
+  String routeDuration='';
+  LocationData? currentLocation;
+  final MapController _mapController = MapController();
+  final TextEditingController _startController = TextEditingController();
+  final TextEditingController _destinationController = TextEditingController();
+  List<LatLng> routeGeometry = [];
 
   @override
   void initState() {
     super.initState();
+    _getLocation(); // Get current location when the app starts
+  }
 
-    rootBundle.loadString('assets/map_style.txt').then((string) {
-      _mapStyle = string;
-    });
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _getLocation() async {
+    final location = Location();
+    try {
+      final locationData = await location.getLocation();
+      setState(() {
+        currentLocation = locationData;
+      });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
+
+  Future<List<String>> fetchLocationSuggestions(String query) async {
+    const accessToken =
+        'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+    final endpoint =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$query.json?access_token=$accessToken';
+
+    final response = await http.get(Uri.parse(endpoint));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final features = data['features'] as List<dynamic>;
+      final suggestions =
+      features.map((feature) => feature['place_name'] as String).toList();
+      return suggestions;
+    } else {
+      throw Exception('Failed to load location suggestions');
+    }
+  }
+
+  Future<LatLng?> suggestionToLatLng(String suggestion) async {
+    const accessToken =
+        'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+    final endpoint =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$suggestion.json?access_token=$accessToken';
+
+    final response = await http.get(Uri.parse(endpoint));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final features = data['features'] as List<dynamic>;
+      if (features.isNotEmpty) {
+        final coordinates = features[0]['geometry']['coordinates'] as List<
+            dynamic>;
+        final latitude = coordinates[1] as double;
+        final longitude = coordinates[0] as double;
+        return LatLng(latitude, longitude);
+      }
+    }
+
+    return null;
+  }
+
+  void fetchAndDisplayRoute() async {
+    if (startLocation != null && endLocation != null) {
+      final routeResponse = await _fetchRouteGeometry(
+        startLocation!,
+        endLocation!,
+      );
+
+      if (routeResponse != null) {
+        setState(() {
+          routeGeometry = routeResponse;
+        });
+        _calculateRouteInfo();
+      }
+    }
+  }
+
+  Future<List<LatLng>?> _fetchRouteGeometry(LatLng start, LatLng end) async {
+    const accessToken = 'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+
+    final response = await http.get(Uri.parse(
+      'https://api.mapbox.com/directions/v5/mapbox/driving/${start
+          .longitude},${start.latitude};${end.longitude},${end
+          .latitude}?geometries=geojson&access_token=$accessToken',
+    ));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final geometry = data['routes'][0]['geometry'];
+
+      if (geometry != null) {
+        final List<dynamic> coordinates = geometry['coordinates'];
+        final routePoints = coordinates.map((coord) {
+          final double lat = coord[1];
+          final double lng = coord[0];
+          return LatLng(lat, lng);
+        }).toList();
+        return routePoints;
+      }
+    }
+
+    return null;
+  }
+
+  void _calculateRouteInfo() async {
+    if (startLocation != null && endLocation != null) {
+      const accessToken =
+          'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+
+      final response = await http.get(Uri.parse(
+        'https://api.mapbox.com/directions/v5/mapbox/driving/${startLocation!.longitude},${startLocation!.latitude};${endLocation!.longitude},${endLocation!.latitude}?geometries=geojson&access_token=$accessToken',
+      ));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final distance = data['routes'][0]['distance'];
+        final durationInSeconds = data['routes'][0]['duration'];
+
+        final hours = (durationInSeconds / 3600).floor();
+        final minutes = ((durationInSeconds % 3600) / 60).floor();
+
+        setState(() {
+          routeDistance = '${(distance / 1000).toStringAsFixed(2)}';
+          routeDuration = '${hours}h ${minutes}m';
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final from = Material(
-        borderRadius: BorderRadius.circular(20),
-        color: Color.fromRGBO(196, 196, 196, 0.2),
-        child: TextFormField(
-          //readOnly: true,
-          // onTap: () async {
-          //     String? selectedplace = await ShowPlaces();
-          //     fromcontroller.text=selectedplace;
-          // },
-          autofocus: false,
-          controller: fromcontroller,
-          style: TextStyle(fontFamily: 'Arimo'),
-          keyboardType: TextInputType.emailAddress,
-          validator: (value) {
-            if (value!.isEmpty) {
-              return ("Pick FROM location");
-            }
-            return null;
-          },
-          onSaved: (value) {
-            fromcontroller.text = value!;
-          },
-          textInputAction: TextInputAction.next,
-          decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.circle_outlined,
-                color: Color.fromRGBO(255, 51, 51, 0.9),
-              ),
-              contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-              hintText: "Choose pick up point",
-              hintStyle: TextStyle(fontFamily: 'Arimo'),
-              border: InputBorder.none),
-        ));
-    final to = Material(
-        borderRadius: BorderRadius.circular(20),
-        color: Color.fromRGBO(196, 196, 196, 0.2),
-        child: TextFormField(
-          autofocus: false,
-          controller: tocontroller,
-          style: TextStyle(fontFamily: 'Arimo'),
-          keyboardType: TextInputType.emailAddress,
-          validator: (value) {
-            if (value!.isEmpty) {
-              return ("Pick TO location");
-            }
-            return null;
-          },
-          onSaved: (value) {
-            tocontroller.text = value!;
-          },
-          textInputAction: TextInputAction.next,
-          decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.location_on_outlined,
-                color: Color.fromRGBO(255, 51, 51, 0.9),
-              ),
-              contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-              hintText: "Choose your destionation",
-              hintStyle: TextStyle(fontFamily: 'Arimo'),
-              border: InputBorder.none),
-        ));
     return Scaffold(
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        title: const Text(
+          'Select location',
+          style: TextStyle(
+              fontFamily: 'Arimo',
+              fontWeight: FontWeight.bold,
+              color: Color.fromRGBO(62, 73, 88, 1.0)),
+        ),
+        centerTitle: true,
         toolbarHeight: 50,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -133,87 +183,276 @@ class _LocationSelectorState extends State<LocationSelector> {
         elevation: 0,
       ),
       body: Stack(
-        children: [
-          GoogleMap(
-            initialCameraPosition: _kGooglePlex,
-            onMapCreated: (GoogleMapController controller) {
-              mapController = controller;
-              mapController.setMapStyle(_mapStyle);
-            },
-          ),
-          Positioned(
-            bottom: 0,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 320,
-              child: Material(
-                elevation: 5,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    topLeft: Radius.circular(20)),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 30, right: 30, top: 10, bottom: 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Where are you going?',
-                            style: TextStyle(
-                                fontFamily: 'Arimo',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Color.fromRGBO(62, 73, 88, 1.0)),
-                          ),
-                          Text('')
-                        ],
+          children: [
+            FlutterMap(
+              options: MapOptions(
+                center: currentLocation != null
+                    ? LatLng(
+                  currentLocation!.latitude!,
+                  currentLocation!.longitude!,
+                )
+                    : LatLng(11.504776, 77.238396),
+                zoom: 13.0,
+              ),
+              mapController: _mapController,
+              children: [
+                TileLayer(
+                  urlTemplate:
+                  'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
+                  additionalOptions: const {
+                    'accessToken':
+                    'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
+                  },
+                ),
+                if (routeGeometry.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: routeGeometry,
+                        strokeWidth: 4,
+                        color: Colors.redAccent,
                       ),
-                      Column(children: [
-                        from,
-                        SizedBox(
-                          height: 15,
-                        ),
-                        to,
-                      ]),
-                      Material(
-                        borderRadius: BorderRadius.circular(15),
-                        elevation: 2,
-                        color: Color.fromRGBO(255, 51, 51, 0.9),
-                        child: MaterialButton(
-                          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                          minWidth: MediaQuery.of(context).size.width,
-                          onPressed: () async {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => VehicleSelection(
-                                          from: fromcontroller.text,
-                                          to: tocontroller.text,
-                                          distbtw: '10.36',
-                                        )));
-                          },
-                          child: Text(
-                            "Next",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontFamily: 'Arimo',
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
+                    ],
+                  ),
+                if (startLocation != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 30.0,
+                        height: 30.0,
+                        point: startLocation!,
+                        builder: (ctx) =>
+                        const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 30.0,
                         ),
                       ),
                     ],
                   ),
-                ),
+                if (endLocation != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 40.0,
+                        height: 40.0,
+                        point: endLocation!,
+                        builder: (ctx) =>
+                            Image.asset('assets/marker.png',height: 40,width: 40,),
+
+                      ),
+                    ],
+                  ),
+                if (currentLocation != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 30.0,
+                        height: 30.0,
+                        point: LatLng(
+                          currentLocation!.latitude!,
+                          currentLocation!.longitude!,
+                        ),
+                        builder: (ctx) =>
+                        const Icon(
+                          Icons.my_location,
+                          color: Colors.redAccent,
+                          size: 25.0,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            Positioned(
+              top: 100,
+              left: 20,
+              right: 20,
+              child: Column(
+                  children: [
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TypeAheadField(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  controller: _startController,
+                                  style: TextStyle(fontFamily: 'Arimo'),
+                                  decoration:
+                                  const InputDecoration(
+                                    border: InputBorder.none,
+                                      hintText:'From' ,
+                                      hintStyle:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w500) ,
+                                      ),
+                                ),
+                                suggestionsCallback: (pattern) async {
+                                  if (pattern.isNotEmpty) {
+                                    return await fetchLocationSuggestions(
+                                        pattern);
+                                  } else {
+                                    return [];
+                                  }
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo')),
+                                  );
+                                },
+                                onSuggestionSelected: (suggestion) async {
+                                  setState(() {
+                                    _startController.text = suggestion;
+                                  });
+                                  final location =
+                                  await suggestionToLatLng(suggestion);
+                                  if (location != null) {
+                                    setState(() {
+                                      startLocation = location;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.my_location),
+                              onPressed: () {
+                                if (currentLocation != null) {
+                                  setState(() {
+                                    startLocation = LatLng(
+                                        currentLocation!.latitude!,
+                                        currentLocation!.longitude!);
+                                    _startController.text = "Current Location";
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding:const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TypeAheadField(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  controller: _destinationController,
+                                  style: TextStyle(fontFamily: 'Arimo'),
+                                  decoration:
+                                  const InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText:'To' ,
+                                    hintStyle:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w500) ,),
+                                ),
+                                suggestionsCallback: (pattern) async {
+                                  if (pattern.isNotEmpty) {
+                                    return await fetchLocationSuggestions(
+                                        pattern);
+                                  } else {
+                                    return [];
+                                  }
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo'),),
+                                  );
+                                },
+                                onSuggestionSelected: (suggestion) async {
+                                  setState(() {
+                                    _destinationController.text = suggestion;
+                                  });
+                                  final location =
+                                  await suggestionToLatLng(suggestion);
+                                  if (location != null) {
+                                    setState(() {
+                                      endLocation = location;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.my_location),
+                              onPressed: () {
+                                if (currentLocation != null) {
+                                  setState(() {
+                                    endLocation = LatLng(
+                                        currentLocation!.latitude!,
+                                        currentLocation!.longitude!);
+                                    _destinationController.text =
+                                    "Current Location";
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        fetchAndDisplayRoute();
+                        if (startLocation != null) {
+                          _mapController.move(
+                            LatLng(startLocation!.latitude,
+                                startLocation!.longitude),
+                            13.0, // Zoom level
+                          );
+                        } // Calculate route distance and duration
+                      },
+                      child: const Text('Show Route on Map'),
+                    ),
+                    SizedBox(height: 10,),
+                    Text('$routeDistance $routeDuration')
+                  ]
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 30,
+              right: 20,
+              left: 20,
+              child: Material(
+              borderRadius: BorderRadius.circular(15),
+              elevation: 2,
+              color: Color.fromRGBO(255, 51, 51, 0.9),
+              child: MaterialButton(
+                padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                minWidth: MediaQuery.of(context).size.width,
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => VehicleSelection(
+                            from: _startController.text,
+                            to: _destinationController.text,
+                            distbtw: routeDistance, duration: routeDuration, fromlatlon: '${startLocation?.latitude},${startLocation?.longitude}', tolatlon: '${endLocation?.latitude},${endLocation?.longitude}',
+                          )));
+                },
+                child: Text(
+                  "Next",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontFamily: 'Arimo',
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),)
+          ]
       ),
     );
   }
