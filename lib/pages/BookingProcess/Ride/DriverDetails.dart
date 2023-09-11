@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/CancellationPage.dart';
+import 'package:velocito/pages/BookingProcess/OnTheWay.dart';
 import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
 
 import '../../../Models/user_model.dart';
@@ -177,19 +178,92 @@ class _DriverDetailsState extends State<DriverDetails> {
                                 padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
                                 minWidth: MediaQuery.of(context).size.width,
                                 onPressed: () async {
-                                  _userRef.child(user!.uid).update(
-                                      {'PASSENGER-STATUS': 'CONFIRMED'});
-                                  _userRef
-                                      .child(user!.uid)
-                                      .update({'TRIP-STATUS': 'ONGOING'});
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PaymentOption()));
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                            surfaceTintColor: Colors.white,
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10)),
+                                            content: Container(
+                                              height: 240,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(40),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Image.asset('assets/successful.png',height: 100,width: 100,),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    'Booking Successfull',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontFamily: 'Arimo',
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    'Your boooking has been confirmed',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Arimo',
+                                                        color: Color.fromRGBO(160, 160, 160, 1.0),
+                                                        fontSize: 12),
+                                                  ),
+                                                  Text(
+                                                    'driver will pick you up soon',
+                                                    style: TextStyle(
+                                                        fontFamily: 'Arimo',
+                                                        color: Color.fromRGBO(160, 160, 160, 1.0),
+                                                        fontSize: 12),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 23,
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.black12,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      _userRef.child(user!.uid).update(
+                                                          {'PASSENGER-STATUS': 'CONFIRMED'});
+                                                      _userRef
+                                                          .child(user!.uid)
+                                                          .update({'TRIP-STATUS': 'ONGOING'});
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  OnTheWay()));
+                                                    },
+                                                    child: Material(
+                                                      color: Colors.transparent,
+                                                      child: Text(
+                                                        'Done',
+                                                        style: TextStyle(
+                                                            fontFamily: 'Arimo',
+                                                            color: Color.fromRGBO(255, 51, 51, 1.0),
+                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ));
+                                      });
+
                                 },
                                 child: Text(
-                                  "Make payment",
+                                  "Confirm booking",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 17,

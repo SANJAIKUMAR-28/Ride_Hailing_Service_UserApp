@@ -380,6 +380,14 @@ class _LocationSelectorState extends State<LocationSelector> {
                                       endLocation = location;
                                     });
                                   }
+                                  fetchAndDisplayRoute();
+                                  if (startLocation != null) {
+                                    _mapController.move(
+                                      LatLng(startLocation!.latitude,
+                                          startLocation!.longitude),
+                                      13.0, // Zoom level
+                                    );
+                                  } //
                                 },
                               ),
                             ),
@@ -401,22 +409,9 @@ class _LocationSelectorState extends State<LocationSelector> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        fetchAndDisplayRoute();
-                        if (startLocation != null) {
-                          _mapController.move(
-                            LatLng(startLocation!.latitude,
-                                startLocation!.longitude),
-                            13.0, // Zoom level
-                          );
-                        } // Calculate route distance and duration
-                      },
-                      child: const Text('Show Route on Map'),
-                    ),
                     SizedBox(height: 10,),
-                    Text('$routeDistance $routeDuration')
+                    if(routeDistance!='')
+                    Text('Distance : $routeDistance \nEstimated time : $routeDuration',style: TextStyle(fontFamily: 'Arimo',),)
                   ]
               ),
             ),
@@ -438,7 +433,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                           builder: (context) => VehicleSelection(
                             from: _startController.text,
                             to: _destinationController.text,
-                            distbtw: routeDistance, duration: routeDuration, fromlatlon: '${startLocation?.latitude},${startLocation?.longitude}', tolatlon: '${endLocation?.latitude},${endLocation?.longitude}',
+                            distbtw: routeDistance, duration: routeDuration, fromlatlon: startLocation!, tolatlon: endLocation!,
                           )));
                 },
                 child: Text(

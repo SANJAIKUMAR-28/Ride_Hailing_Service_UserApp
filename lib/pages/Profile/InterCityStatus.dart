@@ -47,7 +47,11 @@ class _InterCityStatusState extends State<InterCityStatus> {
                   request['DEPARTURE-TIME'],
                   request['DEPARTURE-TIME'],
                   request['DEPARTURE-DATE'],
-                  request['STATUS'])
+                request['RETURN-TIME'],
+                request['RETURN-DATE'],
+                  request['TRIP-TYPE'],
+                request['STATUS'],
+              )
           ],
         ),
       ),
@@ -60,7 +64,7 @@ class _InterCityStatusState extends State<InterCityStatus> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text(
-          'InterCity Status',
+          'Status',
           style: TextStyle(fontFamily: 'Arimo', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -83,7 +87,7 @@ class _InterCityStatusState extends State<InterCityStatus> {
   }
 
   Padding historyBox(String from, String to, String fromtime, String totime,
-      String date, String sts) {
+      String date,String returntime,String returndate,String type, String sts) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Material(
@@ -91,7 +95,7 @@ class _InterCityStatusState extends State<InterCityStatus> {
         color: Colors.white,
         elevation: 2.0,
         child: SizedBox(
-          height: 200,
+          height: (type=='One-way')?200:240,
           child: Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
@@ -103,7 +107,7 @@ class _InterCityStatusState extends State<InterCityStatus> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        date,
+                        type,
                         style: TextStyle(
                             fontFamily: 'Arimo',
                             fontWeight: FontWeight.w600,
@@ -121,11 +125,15 @@ class _InterCityStatusState extends State<InterCityStatus> {
                                       fontFamily: 'Arimo',
                                       color: Colors.redAccent,
                                       fontWeight: FontWeight.w700))
-                              : Text('${sts}',
+                              : ('${sts}' == 'CONFIRMED')?Text('${sts}',
                                   style: TextStyle(
                                       fontFamily: 'Arimo',
                                       color: Colors.green,
-                                      fontWeight: FontWeight.w700)),
+                                      fontWeight: FontWeight.w700)):Text('${sts}',
+                          style: TextStyle(
+                              fontFamily: 'Arimo',
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w700)),
                     ]),
                 SizedBox(
                   height: 5,
@@ -134,8 +142,84 @@ class _InterCityStatusState extends State<InterCityStatus> {
                   color: Colors.black12,
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 5,
                 ),
+                Row(
+                  children: [
+                    Container(
+                      width: 160,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Departure Date & Time',
+                            style: TextStyle(
+                                fontFamily: 'Arimo',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12),
+                          ),
+                          Text(
+                            ': ',
+                            style: TextStyle(
+                                fontFamily: 'Arimo',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '$date - $fromtime',
+                      style: TextStyle(
+                          fontFamily: 'Arimo',
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12),
+                    ),
+                  ],
+                ),
+                if(type!='One-way')
+                  Column(
+                    children: [
+                      SizedBox(height: 5,),
+                      Row(
+                        children: [
+                          Container(
+                            width: 160,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Return Date & Time',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12),
+                                ),
+                                Text(
+                                  ': ',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            '$returndate - $returntime',
+                            style: TextStyle(
+                                fontFamily: 'Arimo',
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                SizedBox(height: 10,),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   child: Row(
@@ -146,12 +230,12 @@ class _InterCityStatusState extends State<InterCityStatus> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              fromtime,
+                              'From',
                               style: TextStyle(
                                 fontFamily: 'Arimo',
                               ),
                             ),
-                            Text(totime,
+                            Text('To',
                                 style: TextStyle(
                                   fontFamily: 'Arimo',
                                 )),
@@ -192,24 +276,26 @@ class _InterCityStatusState extends State<InterCityStatus> {
                       ),
                       Flexible(
                           child: Container(
-                        height: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              from,
-                              style: TextStyle(
-                                  fontFamily: 'Arimo', color: Colors.grey),
+                            height: 100,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  from,
+                                  overflow: TextOverflow.fade,
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo', color: Colors.grey),
+                                ),
+                                Text(
+                                  to,
+                                  overflow: TextOverflow.fade,
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo', color: Colors.grey),
+                                ),
+                              ],
                             ),
-                            Text(
-                              to,
-                              style: TextStyle(
-                                  fontFamily: 'Arimo', color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      )),
+                          )),
                     ],
                   ),
                 ),

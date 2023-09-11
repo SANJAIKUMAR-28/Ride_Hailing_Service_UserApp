@@ -8,6 +8,7 @@ import 'package:velocito/pages/BookingProcess/OnTheWay.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:velocito/pages/BookingProcess/RateDriver.dart';
 
 import '../../Models/user_model.dart';
 
@@ -159,7 +160,13 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
                                 onPressed: () {
-                                  Confirm('Gpay');
+                                  _userRef
+                                      .child(user!.uid)
+                                      .update({'PAYMENT-TYPE': 'Gpay'});
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RateDriver()));
                                 },
                                 child: Row(
                                     mainAxisAlignment:
@@ -204,7 +211,14 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
                                 onPressed: () {
-                                  Confirm('Card');
+                                  _userRef
+                                      .child(user!.uid)
+                                      .update({'PAYMENT-TYPE': 'Card'});
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RateDriver()));
+
                                 },
                                 child: Row(
                                     mainAxisAlignment:
@@ -249,7 +263,13 @@ class _PaymentOptionState extends State<PaymentOption> {
                                 padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
                                 splashColor: Colors.black.withOpacity(0.2),
                                 onPressed: () {
-                                  Confirm('Cash');
+                                  _userRef
+                                      .child(user!.uid)
+                                      .update({'PAYMENT-TYPE': 'Cash'});
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RateDriver()));
                                 },
                                 child: Row(
                                     mainAxisAlignment:
@@ -292,90 +312,5 @@ class _PaymentOptionState extends State<PaymentOption> {
             ],
           ),
         ]));
-  }
-
-  Confirm(String paymentType) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              surfaceTintColor: Colors.white,
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              content: Container(
-                height: 240,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 95,
-                      color: Color.fromRGBO(255, 51, 51, 0.8),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Booking Successfull',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Arimo',
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Your boooking has been confirmed',
-                      style: TextStyle(
-                          fontFamily: 'Arimo',
-                          color: Color.fromRGBO(160, 160, 160, 1.0),
-                          fontSize: 12),
-                    ),
-                    Text(
-                      'driver will pick you up soon',
-                      style: TextStyle(
-                          fontFamily: 'Arimo',
-                          color: Color.fromRGBO(160, 160, 160, 1.0),
-                          fontSize: 12),
-                    ),
-                    SizedBox(
-                      height: 23,
-                    ),
-                    Divider(
-                      color: Colors.black12,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        _userRef
-                            .child(user!.uid)
-                            .update({'PAYMENT-TYPE': paymentType});
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OnTheWay(
-                                      payment: paymentType,
-                                    )));
-                      },
-                      child: Text(
-                        'Done',
-                        style: TextStyle(
-                            fontFamily: 'Arimo',
-                            color: Color.fromRGBO(255, 51, 51, 1.0),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
-              ));
-        });
   }
 }

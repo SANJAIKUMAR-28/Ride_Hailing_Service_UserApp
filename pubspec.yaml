@@ -119,6 +119,7 @@ flutter:
     - assets/phnemailimg.png
     - assets/ind.png
     - assets/marker.png
+    - assets/successful.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

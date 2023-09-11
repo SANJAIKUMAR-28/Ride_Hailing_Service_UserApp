@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:location/location.dart';
 import 'package:velocito/pages/BookingProcess/Ride/RideOptions.dart';
 
 import '../../../Models/polyline_response.dart';
@@ -13,8 +16,8 @@ class VehicleSelection extends StatefulWidget {
   final String to;
   final String distbtw;
   final String duration;
-  final String fromlatlon;
-  final String tolatlon;
+  final LatLng fromlatlon;
+  final LatLng tolatlon;
   const VehicleSelection(
       {super.key, required this.from, required this.to, required this.distbtw, required this.duration, required this.fromlatlon, required this.tolatlon});
 
@@ -23,6 +26,53 @@ class VehicleSelection extends StatefulWidget {
 }
 
 class _VehicleSelectionState extends State<VehicleSelection> {
+  final MapController _mapController = MapController();
+  List<LatLng> routeGeometry = [];
+  LocationData? currentLocation;
+  void initstate(){
+    super.initState();
+    fetchAndDisplayRoute();
+  }
+  void fetchAndDisplayRoute() async {
+      final routeResponse = await _fetchRouteGeometry(
+        widget.fromlatlon,
+        widget.tolatlon,
+      );
+
+      if (routeResponse != null) {
+        setState(() {
+          routeGeometry = routeResponse;
+        });
+      }
+
+  }
+  Future<List<LatLng>?> _fetchRouteGeometry(LatLng start, LatLng end) async {
+    const accessToken = 'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+
+    final response = await http.get(Uri.parse(
+      'https://api.mapbox.com/directions/v5/mapbox/driving/${start
+          .longitude},${start.latitude};${end.longitude},${end
+          .latitude}?geometries=geojson&access_token=$accessToken',
+    ));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final geometry = data['routes'][0]['geometry'];
+
+      if (geometry != null) {
+        final List<dynamic> coordinates = geometry['coordinates'];
+        final routePoints = coordinates.map((coord) {
+          final double lat = coord[1];
+          final double lng = coord[0];
+          return LatLng(lat, lng);
+        }).toList();
+        return routePoints;
+      }
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +94,84 @@ class _VehicleSelectionState extends State<VehicleSelection> {
           elevation: 0,
         ),
         body: Stack(children: [
+          FlutterMap(
+            options: MapOptions(
+              center: currentLocation != null
+                  ? LatLng(
+                currentLocation!.latitude!,
+                currentLocation!.longitude!,
+              )
+                  : LatLng(11.504776, 77.238396),
+              zoom: 13.0,
+            ),
+            mapController: _mapController,
+            children: [
+              TileLayer(
+                urlTemplate:
+                'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
+                additionalOptions: const {
+                  'accessToken':
+                  'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
+                },
+              ),
+              if (routeGeometry.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: routeGeometry,
+                      strokeWidth: 4,
+                      color: Colors.redAccent,
+                    ),
+                  ],
+                ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 30.0,
+                      height: 30.0,
+                      point: widget.fromlatlon,
+                      builder: (ctx) =>
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                        size: 30.0,
+                      ),
+                    ),
+                  ],
+                ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 40.0,
+                      height: 40.0,
+                      point: widget.tolatlon,
+                      builder: (ctx) =>
+                          Image.asset('assets/marker.png',height: 40,width: 40,),
 
+                    ),
+                  ],
+                ),
+              if (currentLocation != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 30.0,
+                      height: 30.0,
+                      point: LatLng(
+                        currentLocation!.latitude!,
+                        currentLocation!.longitude!,
+                      ),
+                      builder: (ctx) =>
+                      const Icon(
+                        Icons.my_location,
+                        color: Colors.redAccent,
+                        size: 25.0,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
           Positioned(
             bottom: 0,
             child: SizedBox(

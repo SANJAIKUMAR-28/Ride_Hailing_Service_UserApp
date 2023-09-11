@@ -5,15 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/CancellationPage.dart';
-import 'package:velocito/pages/BookingProcess/RateDriver.dart';
+import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
+
 
 import '../../Models/user_model.dart';
 
 class OnTheWay extends StatefulWidget {
-  final String payment;
-  const OnTheWay({super.key, required this.payment});
+  const OnTheWay({super.key,});
 
   @override
   State<OnTheWay> createState() => _OnTheWayState();
@@ -31,6 +30,7 @@ class _OnTheWayState extends State<OnTheWay> {
   String to='';
   String fromtime='';
   String totime='';
+  String num='';
   @override
   void initState() {
     super.initState();
@@ -53,6 +53,7 @@ class _OnTheWayState extends State<OnTheWay> {
           to=data['TO'];
           fromtime=data['FROM-TIME'];
           totime=data['TO-TIME'];
+          num=data['DRIVER-NUMBER'];
         });
       }
     });
@@ -94,7 +95,7 @@ checksts();
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 320,
+                height: 280,
                 child: Material(
                   elevation: 5,
                   borderRadius: BorderRadius.only(
@@ -107,55 +108,7 @@ checksts();
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         historyBox(),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 50,
-                          child: Material(
-                            color: Color.fromRGBO(196, 196, 196, 0.2),
-                            borderRadius: BorderRadius.circular(10),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      (widget.payment=='Card')?
-                                      Image.asset('assets/cardimg.png',
-                                        height: 30,
-                                        width: 30,
-                                      ):(widget.payment=='Cash')?Image.asset('assets/cash.png',
-                                        height: 30,
-                                        width: 30,
-                                      ):Image.asset('assets/gpay.png',
-                                        height: 30,
-                                        width: 30,
-                                      ),
-                                      SizedBox(width: 10,),
-                                      (widget.payment=='Card')?
-                                      Text('**** **** 4226',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),):
-                                      (widget.payment=='Cash')?Text('Cash',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),):
-                                      Text('Google pay',style: TextStyle(fontFamily: 'Arimo',fontSize: 12,fontWeight: FontWeight.w700,color: Color.fromRGBO(62, 73 ,88, 1)),),
-                                    ],
-                                  ),
-                                  Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children:[
-                                        Icon(LineIcons.indianRupeeSign,size: 15,color: Colors.black,),
-                                        SizedBox(width: 2,),
-                                        Text('106.98',style: TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: 'Arimo',
-                                            color:
-                                            Colors.black,
-                                            fontWeight: FontWeight.bold),),
-                                      ]
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                        SizedBox(height: 20,),
                         Material(
                           borderRadius: BorderRadius.circular(15),
                           elevation: 2,
@@ -334,7 +287,7 @@ checksts();
                                   minWidth: MediaQuery.of(context).size.width,
                                   onPressed: () async {
                                     Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => RateDriver()));
+                                        MaterialPageRoute(builder: (context) => PaymentOption()));
                                   },
                                   child:  Text(
                                     "I\'m coming",
@@ -358,7 +311,7 @@ checksts();
                                   padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                                   minWidth: MediaQuery.of(context).size.width,
                                   onPressed: () async {
-                                    await FlutterPhoneDirectCaller.callNumber('7373994102');
+                                    await FlutterPhoneDirectCaller.callNumber(num);
                                   },
                                   child:  Text(
                                     "Call",

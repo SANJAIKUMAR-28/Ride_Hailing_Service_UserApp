@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/Ride/DriverDetails.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
@@ -21,8 +22,8 @@ class RideOptions extends StatefulWidget {
   final String dist;
   final String distbtw;
   final String duration;
-  final String fromlatlon;
-  final String tolatlon;
+  final LatLng fromlatlon;
+  final LatLng tolatlon;
   const RideOptions(
       {super.key,
       required this.img,
@@ -311,8 +312,8 @@ class _RideOptionsState extends State<RideOptions> {
                     Map<String, String> Requests = {
                       'FROM': widget.from,
                       'TO': widget.to,
-                      'FROM-LATLON':widget.fromlatlon,
-                      'TO-LATLON':widget.tolatlon,
+                      'FROM-LATLON':'${widget.fromlatlon}',
+                      'TO-LATLON':'${widget.tolatlon}',
                       'VEHICLE': widget.vec,
                       'COST': widget.cost,
                       'PASSENGER-NAME': '${loggedInUser.name}',
