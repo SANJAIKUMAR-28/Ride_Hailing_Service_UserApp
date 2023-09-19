@@ -29,7 +29,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
   final MapController _mapController = MapController();
   List<LatLng> routeGeometry = [];
   LocationData? currentLocation;
-  void initstate(){
+  void initState(){
     super.initState();
     fetchAndDisplayRoute();
   }
@@ -96,12 +96,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
         body: Stack(children: [
           FlutterMap(
             options: MapOptions(
-              center: currentLocation != null
-                  ? LatLng(
-                currentLocation!.latitude!,
-                currentLocation!.longitude!,
-              )
-                  : LatLng(11.504776, 77.238396),
+              center: widget.fromlatlon,
               zoom: 13.0,
             ),
             mapController: _mapController,
@@ -114,7 +109,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                   'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
                 },
               ),
-              if (routeGeometry.isNotEmpty)
                 PolylineLayer(
                   polylines: [
                     Polyline(
@@ -193,7 +187,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                             'assets/auto.png',
                             'VC Auto',
                             farecalc('Auto', widget.distbtw),
-                            '0.67 km',
                             '3',
                             widget.distbtw),
                         Divider(
@@ -205,7 +198,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                             'assets/bike.png',
                             'VC Bike',
                             farecalc('Bike', widget.distbtw),
-                            '0.79 km',
                             '1',
                             widget.distbtw),
                         Divider(
@@ -217,7 +209,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                             'assets/taxi4.png',
                             'VC Taxi 4 seats',
                             farecalc('Car4', widget.distbtw),
-                            '0.5 km',
                             '4',
                             widget.distbtw),
                         Divider(
@@ -229,7 +220,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                             'assets/taxi7.png',
                             'VC Taxi 7 seats',
                             farecalc('Car7', widget.distbtw),
-                            '1.67 km',
                             '7',
                             widget.distbtw),
                         Divider(
@@ -245,7 +235,7 @@ class _VehicleSelectionState extends State<VehicleSelection> {
         ]));
   }
 
-  Material vehicle(String asset, String name, String price, String dist,
+  Material vehicle(String asset, String name, String price,
       String seats, String distbtw) {
     return Material(
         elevation: 0,
@@ -267,7 +257,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                           time: '3',
                           from: widget.from,
                           to: widget.to,
-                          dist: dist,
                           distbtw: distbtw, duration: widget.duration, fromlatlon: widget.fromlatlon, tolatlon: widget.tolatlon,
                         )));
           },
@@ -315,14 +304,6 @@ class _VehicleSelectionState extends State<VehicleSelection> {
                         fontWeight: FontWeight.bold),
                   ),
                 ]),
-                Text(
-                  '${dist}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontFamily: 'Arimo',
-                    color: Color.fromRGBO(0, 0, 0, 0.60),
-                  ),
-                ),
               ],
             )
           ]),

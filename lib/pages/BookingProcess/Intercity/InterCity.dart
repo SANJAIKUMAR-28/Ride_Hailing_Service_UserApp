@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
-import 'package:line_icons/line_icon.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 import 'package:velocito/pages/BookingProcess/Intercity/TripDetails.dart';
 
@@ -20,12 +24,81 @@ class _InterCityState extends State<InterCity> {
   int child = 0;
   int adultcount = 0;
   int childcount = 0;
+  String routeDistance='';
+  String routeDuration='';
+  LatLng? startLocation;
+  LatLng? endLocation;
   final fromcontroller = new TextEditingController();
   final tocontroller = new TextEditingController();
   final departureController = new TextEditingController();
   final returnController = new TextEditingController();
   final departuretimeController = new TextEditingController();
   final returntimeController = new TextEditingController();
+  Future<List<String>> fetchLocationSuggestions(String query) async {
+    const accessToken =
+        'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+    final endpoint =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$query.json?access_token=$accessToken';
+
+    final response = await http.get(Uri.parse(endpoint));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final features = data['features'] as List<dynamic>;
+      final suggestions =
+      features.map((feature) => feature['place_name'] as String).toList();
+      return suggestions;
+    } else {
+      throw Exception('Failed to load location suggestions');
+    }
+  }
+
+  Future<LatLng?> suggestionToLatLng(String suggestion) async {
+    const accessToken =
+        'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+    final endpoint =
+        'https://api.mapbox.com/geocoding/v5/mapbox.places/$suggestion.json?access_token=$accessToken';
+
+    final response = await http.get(Uri.parse(endpoint));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final features = data['features'] as List<dynamic>;
+      if (features.isNotEmpty) {
+        final coordinates = features[0]['geometry']['coordinates'] as List<
+            dynamic>;
+        final latitude = coordinates[1] as double;
+        final longitude = coordinates[0] as double;
+        return LatLng(latitude, longitude);
+      }
+    }
+
+    return null;
+  }
+  void _calculateRouteInfo() async {
+    if (startLocation != null && endLocation != null) {
+      const accessToken =
+          'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+
+      final response = await http.get(Uri.parse(
+        'https://api.mapbox.com/directions/v5/mapbox/driving/${startLocation!.longitude},${startLocation!.latitude};${endLocation!.longitude},${endLocation!.latitude}?geometries=geojson&access_token=$accessToken',
+      ));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final distance = data['routes'][0]['distance'];
+        final durationInSeconds = data['routes'][0]['duration'];
+
+        final hours = (durationInSeconds / 3600).floor();
+        final minutes = ((durationInSeconds % 3600) / 60).floor();
+
+        setState(() {
+          routeDistance = '${(distance / 1000).toStringAsFixed(2)}';
+          routeDuration = '${hours}h ${minutes}m';
+        });
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final from = Material(
@@ -35,29 +108,45 @@ class _InterCityState extends State<InterCity> {
           decoration: BoxDecoration(
               border: Border.all(color: Color.fromRGBO(151, 173, 182, 0.5)),
               borderRadius: BorderRadius.circular(10)),
-          child: TextFormField(
-            cursorColor: Colors.redAccent,
-            autofocus: false,
-            controller: fromcontroller,
-            style: TextStyle(fontFamily: 'Arimo'),
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return ("Pick FROM location");
+          child: TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+              controller: fromcontroller,
+              style: TextStyle(fontFamily: 'Arimo'),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.location_on_outlined,
+                    color: Color.fromRGBO(255, 51, 51, 0.9),
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  border: InputBorder.none),
+            ),
+            suggestionsCallback: (pattern) async {
+              if (pattern.isNotEmpty) {
+                return await fetchLocationSuggestions(
+                    pattern);
+              } else {
+                return [];
               }
-              return null;
             },
-            onSaved: (value) {
-              fromcontroller.text = value!;
+            itemBuilder: (context, suggestion) {
+              return ListTile(
+                visualDensity: VisualDensity(horizontal: 0,vertical: -4),
+                title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo',fontSize: 12),),
+              );
             },
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.location_on_outlined,
-                  color: Color.fromRGBO(255, 51, 51, 0.9),
-                ),
-                contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                border: InputBorder.none),
+            onSuggestionSelected: (suggestion) async {
+              setState(() {
+                fromcontroller.text = suggestion;
+              });
+              final location =
+              await suggestionToLatLng(suggestion);
+              if (location != null) {
+                setState(() {
+                  startLocation = location;
+                });
+              }
+
+            },
           ),
         ));
     final to = Material(
@@ -67,29 +156,46 @@ class _InterCityState extends State<InterCity> {
           decoration: BoxDecoration(
               border: Border.all(color: Color.fromRGBO(151, 173, 182, 0.5)),
               borderRadius: BorderRadius.circular(10)),
-          child: TextFormField(
-            cursorColor: Colors.redAccent,
-            autofocus: false,
-            controller: tocontroller,
-            style: TextStyle(fontFamily: 'Arimo'),
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return ("Pick TO location");
+          child: TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+              controller: tocontroller,
+              style: TextStyle(fontFamily: 'Arimo'),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.location_on_outlined,
+                    color: Color.fromRGBO(255, 51, 51, 0.9),
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  border: InputBorder.none),
+            ),
+            suggestionsCallback: (pattern) async {
+              if (pattern.isNotEmpty) {
+                return await fetchLocationSuggestions(
+                    pattern);
+              } else {
+                return [];
               }
-              return null;
             },
-            onSaved: (value) {
-              tocontroller.text = value!;
+
+            itemBuilder: (context, suggestion) {
+              return ListTile(
+                visualDensity: VisualDensity(horizontal: 0,vertical: -4),
+                title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo',fontSize: 12),),
+              );
             },
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.location_on_outlined,
-                  color: Color.fromRGBO(255, 51, 51, 0.9),
-                ),
-                contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                border: InputBorder.none),
+            onSuggestionSelected: (suggestion) async {
+              setState(() {
+                tocontroller.text = suggestion;
+              });
+              final location =
+              await suggestionToLatLng(suggestion);
+              if (location != null) {
+                setState(() {
+                  endLocation = location;
+                });
+              }
+              _calculateRouteInfo();
+            },
           ),
         ));
     final departure = SizedBox(
@@ -583,360 +689,372 @@ class _InterCityState extends State<InterCity> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text('$adultcount Adult, $childcount Child',
+                     Text('$adultcount Adult, $childcount Child',
                         style: TextStyle(fontFamily: 'Arimo'))
                   ],
                 ),
               )),
         ));
+
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(children: [
-          Expanded(
-            child: SingleChildScrollView(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height,
-                    color: Colors.black,
-                  ),
-                ],
-              ),
-            ),
+        resizeToAvoidBottomInset: true,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: const Text(
+            'Inter-City',
+            style: TextStyle(
+                fontFamily: 'Arimo',
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(62, 73, 88, 1.0)),
           ),
-          Stack(clipBehavior: Clip.none, children: <Widget>[
-            SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: (!round) ? 600 : 650,
-                child: Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        topLeft: Radius.circular(20)),
-                    color: Colors.white,
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () {
-                                      setState(() {
-                                        oneway = !oneway;
-                                        round = false;
-                                      });
-                                    },
-                                    child: Row(
+          centerTitle: true,
+          toolbarHeight: 50,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: SingleChildScrollView(
+          child: Stack(clipBehavior: Clip.none, children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              color: Color.fromRGBO(255, 245, 245, 1),
+            ),
+            Positioned(
+              bottom: 0,
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: (!round) ? 600 : 650,
+                  child: Material(
+                      elevation: 5,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20)),
+                      color: Colors.white,
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () {
+                                        setState(() {
+                                          oneway = !oneway;
+                                          round = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Stack(
+                                            children: [
+                                              Icon(
+                                                Icons.circle_outlined,
+                                                size: 20,
+                                                color: Colors.redAccent,
+                                              ),
+                                              Positioned.fill(
+                                                  child: Align(
+                                                      alignment: Alignment.center,
+                                                      child: Icon(
+                                                        Icons.circle,
+                                                        size: 11,
+                                                        color: (oneway)
+                                                            ? Colors.redAccent
+                                                            : Colors.white,
+                                                      ))),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            'One-way',
+                                            style: TextStyle(
+                                                fontFamily: 'Arimo',
+                                                fontWeight: FontWeight.w700),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () {
+                                        setState(() {
+                                          round = !round;
+                                          oneway = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Stack(
+                                            children: [
+                                              Icon(
+                                                Icons.circle_outlined,
+                                                size: 20,
+                                                color: Colors.redAccent,
+                                              ),
+                                              Positioned.fill(
+                                                  child: Align(
+                                                      alignment: Alignment.center,
+                                                      child: Icon(
+                                                        Icons.circle,
+                                                        size: 11,
+                                                        color: (round)
+                                                            ? Colors.redAccent
+                                                            : Colors.white,
+                                                      ))),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            'Rounded-trip',
+                                            style: TextStyle(
+                                                fontFamily: 'Arimo',
+                                                fontWeight: FontWeight.w700),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () {
+                                        setState(() {
+                                          sedan = !sedan;
+                                          suv = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Stack(
+                                            children: [
+                                              Icon(
+                                                Icons.circle_outlined,
+                                                size: 20,
+                                                color: Colors.redAccent,
+                                              ),
+                                              Positioned.fill(
+                                                  child: Align(
+                                                      alignment: Alignment.center,
+                                                      child: Icon(
+                                                        Icons.circle,
+                                                        size: 11,
+                                                        color: (sedan)
+                                                            ? Colors.redAccent
+                                                            : Colors.white,
+                                                      ))),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            'Sedan (max 4)',
+                                            style: TextStyle(
+                                                fontFamily: 'Arimo',
+                                                fontWeight: FontWeight.w700),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () {
+                                        setState(() {
+                                          suv = !suv;
+                                          sedan = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Stack(
+                                            children: [
+                                              Icon(
+                                                Icons.circle_outlined,
+                                                size: 20,
+                                                color: Colors.redAccent,
+                                              ),
+                                              Positioned.fill(
+                                                  child: Align(
+                                                      alignment: Alignment.center,
+                                                      child: Icon(
+                                                        Icons.circle,
+                                                        size: 11,
+                                                        color: (suv)
+                                                            ? Colors.redAccent
+                                                            : Colors.white,
+                                                      ))),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            'SUV (max 7)  ',
+                                            style: TextStyle(
+                                                fontFamily: 'Arimo',
+                                                fontWeight: FontWeight.w700),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Text(
+                                  'From',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                from,
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  'To',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                to,
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Stack(
-                                          children: [
-                                            Icon(
-                                              Icons.circle_outlined,
-                                              size: 20,
-                                              color: Colors.redAccent,
-                                            ),
-                                            Positioned.fill(
-                                                child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      Icons.circle,
-                                                      size: 11,
-                                                      color: (oneway)
-                                                          ? Colors.redAccent
-                                                          : Colors.white,
-                                                    ))),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
                                         Text(
-                                          'One-way',
+                                          'Departure date',
                                           style: TextStyle(
                                               fontFamily: 'Arimo',
                                               fontWeight: FontWeight.w700),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () {
-                                      setState(() {
-                                        round = !round;
-                                        oneway = false;
-                                      });
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            Icon(
-                                              Icons.circle_outlined,
-                                              size: 20,
-                                              color: Colors.redAccent,
-                                            ),
-                                            Positioned.fill(
-                                                child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      Icons.circle,
-                                                      size: 11,
-                                                      color: (round)
-                                                          ? Colors.redAccent
-                                                          : Colors.white,
-                                                    ))),
-                                          ],
                                         ),
                                         SizedBox(
-                                          width: 8,
+                                          height: 5,
                                         ),
+                                        departure,
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                          'Rounded-trip',
+                                          'Departure time',
                                           style: TextStyle(
                                               fontFamily: 'Arimo',
                                               fontWeight: FontWeight.w700),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () {
-                                      setState(() {
-                                        sedan = !sedan;
-                                        suv = false;
-                                      });
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            Icon(
-                                              Icons.circle_outlined,
-                                              size: 20,
-                                              color: Colors.redAccent,
-                                            ),
-                                            Positioned.fill(
-                                                child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      Icons.circle,
-                                                      size: 11,
-                                                      color: (sedan)
-                                                          ? Colors.redAccent
-                                                          : Colors.white,
-                                                    ))),
-                                          ],
                                         ),
                                         SizedBox(
-                                          width: 8,
+                                          height: 5,
                                         ),
-                                        Text(
-                                          'Sedan (max 4)',
-                                          style: TextStyle(
-                                              fontFamily: 'Arimo',
-                                              fontWeight: FontWeight.w700),
-                                        )
+                                        departuretime,
                                       ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onTap: () {
-                                      setState(() {
-                                        suv = !suv;
-                                        sedan = false;
-                                      });
+                                    )
+                                  ],
+                                ),
+                                if (round) Return(),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  'Travellers',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                travellers,
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Material(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color.fromRGBO(255, 51, 51, 0.9),
+                                  child: MaterialButton(
+                                    padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                    minWidth: MediaQuery.of(context).size.width,
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => TripDetails(
+                                                  from: fromcontroller.text,
+                                                  to: tocontroller.text,
+                                                  trip: (oneway)
+                                                      ? 'One-way'
+                                                      : 'Round',
+                                                  vec: (sedan) ? 'Sedan' : 'SUV',
+                                                  deptdate:
+                                                      departureController.text,
+                                                  depttime:
+                                                      departuretimeController
+                                                          .text,
+                                                  returndate: (oneway)
+                                                      ? ''
+                                                      : returnController.text,
+                                                  returntime: (oneway)
+                                                      ? ''
+                                                      : returntimeController.text,
+                                                  adult: adultcount.toString(),
+                                                  dist: routeDistance,
+                                                  est: routeDuration,
+                                                  child: childcount.toString())));
                                     },
-                                    child: Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            Icon(
-                                              Icons.circle_outlined,
-                                              size: 20,
-                                              color: Colors.redAccent,
-                                            ),
-                                            Positioned.fill(
-                                                child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      Icons.circle,
-                                                      size: 11,
-                                                      color: (suv)
-                                                          ? Colors.redAccent
-                                                          : Colors.white,
-                                                    ))),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        Text(
-                                          'SUV (max 7)  ',
-                                          style: TextStyle(
-                                              fontFamily: 'Arimo',
-                                              fontWeight: FontWeight.w700),
-                                        )
-                                      ],
+                                    child: Text(
+                                      "Next",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontFamily: 'Arimo',
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              Text(
-                                'From',
-                                style: TextStyle(
-                                    fontFamily: 'Arimo',
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              from,
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                'To',
-                                style: TextStyle(
-                                    fontFamily: 'Arimo',
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              to,
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Departure date',
-                                        style: TextStyle(
-                                            fontFamily: 'Arimo',
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      departure,
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Departure time',
-                                        style: TextStyle(
-                                            fontFamily: 'Arimo',
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      departuretime,
-                                    ],
-                                  )
-                                ],
-                              ),
-                              if (round) Return(),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                'Travellers',
-                                style: TextStyle(
-                                    fontFamily: 'Arimo',
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              travellers,
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Material(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Color.fromRGBO(255, 51, 51, 0.9),
-                                child: MaterialButton(
-                                  padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                                  minWidth: MediaQuery.of(context).size.width,
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => TripDetails(
-                                                from: fromcontroller.text,
-                                                to: tocontroller.text,
-                                                trip: (oneway)
-                                                    ? 'One-way'
-                                                    : 'Round',
-                                                vec: (sedan) ? 'Sedan' : 'SUV',
-                                                deptdate:
-                                                    departureController.text,
-                                                depttime:
-                                                    departuretimeController
-                                                        .text,
-                                                returndate: (oneway)
-                                                    ? ''
-                                                    : returnController.text,
-                                                returntime: (oneway)
-                                                    ? ''
-                                                    : returntimeController.text,
-                                                adult: adultcount.toString(),
-                                                child: childcount.toString())));
-                                  },
-                                  child: Text(
-                                    "Next",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontFamily: 'Arimo',
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                              ),
-                            ]))))
+                              ])))),
+            )
           ]),
-        ]));
+        ));
   }
 
   Column Return() {

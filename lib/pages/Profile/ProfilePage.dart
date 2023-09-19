@@ -1,18 +1,15 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as st;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:velocito/LoginSignup/MobileLogin.dart';
 import 'package:velocito/LoginSignup/SelectOption.dart';
-import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
-import 'package:velocito/pages/BookingProcess/PaymentOption.dart';
-import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
 import 'package:velocito/pages/Profile/InterCityStatus.dart';
-import 'package:velocito/pages/Profile/RideHistory.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:http/http.dart' as http;
 import '../../Models/user_model.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -27,6 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   UserModel loggedInUser = UserModel();
   final CollectionReference ref =
       FirebaseFirestore.instance.collection("users");
+  late Map<String, dynamic> paymentIntent;
   @override
   void initState() {
     super.initState();
@@ -39,7 +37,56 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {});
     });
   }
+  void makePayment() async {
+    try {
+      paymentIntent = await createPaymentIntent();
 
+      var gpay = st.PaymentSheetGooglePay(
+        merchantCountryCode: "US",
+        currencyCode: "USD",
+        testEnv: true,
+      );
+      st.Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: st.SetupPaymentSheetParameters(
+            paymentIntentClientSecret: paymentIntent!["client_secret"],
+            style: ThemeMode.dark,
+            merchantDisplayName: "Velocito",
+            googlePay: gpay,
+          ));
+
+      displayPaymentSheet();
+    } catch (e) {}
+  }
+
+  void displayPaymentSheet() async {
+    try {
+      await st.Stripe.instance.presentPaymentSheet();
+      print("done");
+    } catch (e) {
+      print("failed");
+    }
+  }
+
+  createPaymentIntent() async {
+    try {
+      Map<String, dynamic> body = {
+        "amount": "1000",
+        "currency": "INR",
+      };
+
+      http.Response response = await http.post(
+          Uri.parse("https://api.stripe.com/v1/payment_intents"),
+          body: body,
+          headers: {
+            "Authorization":
+            "Bearer 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",
+            "Content-type": "application/x-www-form-urlencoded"
+          });
+      return json.decode(response.body);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -523,7 +570,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           onPressed: () {
-
+makePayment();
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

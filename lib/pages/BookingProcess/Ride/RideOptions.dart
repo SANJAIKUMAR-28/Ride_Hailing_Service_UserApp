@@ -1,14 +1,18 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:location/location.dart';
 import 'package:velocito/pages/BookingProcess/Ride/DriverDetails.dart';
 import 'package:velocito/pages/BookingProcess/Ride/VehicleSelection.dart';
-import 'package:lottie/lottie.dart';
+import 'package:lottie/lottie.dart' as lottie;
 import 'dart:async';
-
+import 'package:http/http.dart' as http;
 import '../../../Models/user_model.dart';
 
 class RideOptions extends StatefulWidget {
@@ -19,7 +23,6 @@ class RideOptions extends StatefulWidget {
   final String time;
   final String from;
   final String to;
-  final String dist;
   final String distbtw;
   final String duration;
   final LatLng fromlatlon;
@@ -33,7 +36,6 @@ class RideOptions extends StatefulWidget {
       required this.time,
       required this.from,
       required this.to,
-      required this.dist,
       required this.distbtw, required this.duration, required this.fromlatlon, required this.tolatlon});
 
   @override
@@ -51,9 +53,13 @@ class _RideOptionsState extends State<RideOptions> {
   late String date;
   late String fromtime;
   late String totime;
+  final MapController _mapController = MapController();
+  List<LatLng> routeGeometry = [];
+  LocationData? currentLocation;
   @override
   void initState() {
     super.initState();
+    fetchAndDisplayRoute();
     DateTime dateTime = DateTime.now();
     String day = "${dateTime.day}";
     String month = "${dateTime.month}";
@@ -82,7 +88,45 @@ class _RideOptionsState extends State<RideOptions> {
       }
     });
   }
+  void fetchAndDisplayRoute() async {
+    final routeResponse = await _fetchRouteGeometry(
+      widget.fromlatlon,
+      widget.tolatlon,
+    );
 
+    if (routeResponse != null) {
+      setState(() {
+        routeGeometry = routeResponse;
+      });
+    }
+
+  }
+  Future<List<LatLng>?> _fetchRouteGeometry(LatLng start, LatLng end) async {
+    const accessToken = 'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ'; // Replace with your Mapbox access token
+
+    final response = await http.get(Uri.parse(
+      'https://api.mapbox.com/directions/v5/mapbox/driving/${start
+          .longitude},${start.latitude};${end.longitude},${end
+          .latitude}?geometries=geojson&access_token=$accessToken',
+    ));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final geometry = data['routes'][0]['geometry'];
+
+      if (geometry != null) {
+        final List<dynamic> coordinates = geometry['coordinates'];
+        final routePoints = coordinates.map((coord) {
+          final double lat = coord[1];
+          final double lng = coord[0];
+          return LatLng(lat, lng);
+        }).toList();
+        return routePoints;
+      }
+    }
+
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,23 +148,85 @@ class _RideOptionsState extends State<RideOptions> {
           elevation: 0,
         ),
         body: Stack(children: [
-          Column(
+          FlutterMap(
+            options: MapOptions(
+              center: widget.fromlatlon,
+              zoom: 13.0,
+            ),
+            mapController: _mapController,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  clipBehavior: Clip.none,
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [Image.asset('assets/map.png')],
+              TileLayer(
+                urlTemplate:
+                'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
+                additionalOptions: const {
+                  'accessToken':
+                  'pk.eyJ1IjoidGVhbS1yb2d1ZSIsImEiOiJjbGxoaXF5azUwYm40M3BxdWw5bHF1ZXU0In0.AebPDjGi7PS2fLlYf65vPQ',
+                },
+              ),
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: routeGeometry,
+                    strokeWidth: 4,
+                    color: Colors.redAccent,
                   ),
+                ],
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    width: 30.0,
+                    height: 30.0,
+                    point: widget.fromlatlon,
+                    builder: (ctx) =>
+                    const Icon(
+                      Icons.location_on,
+                      color: Colors.red,
+                      size: 30.0,
+                    ),
+                  ),
+                ],
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    width: 40.0,
+                    height: 40.0,
+                    point: widget.tolatlon,
+                    builder: (ctx) =>
+                        Image.asset('assets/marker.png',height: 40,width: 40,),
+
+                  ),
+                ],
+              ),
+              if (currentLocation != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 30.0,
+                      height: 30.0,
+                      point: LatLng(
+                        currentLocation!.latitude!,
+                        currentLocation!.longitude!,
+                      ),
+                      builder: (ctx) =>
+                      const Icon(
+                        Icons.my_location,
+                        color: Colors.redAccent,
+                        size: 25.0,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 320,
-                child: Selection(),
-              ),
             ],
+          ),
+          Positioned(
+            bottom: 0,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 320,
+              child: Selection(),
+            ),
           ),
         ]));
   }
@@ -321,7 +427,6 @@ class _RideOptionsState extends State<RideOptions> {
                       'STATUS': 'REQUESTED',
                       'PASSENGER-STATUS': 'INITIATED',
                       'PASSENGER-ID': '${loggedInUser.uid}',
-                      'DISTANCE': widget.dist,
                       'SEATS': widget.seats,
                       'TIME': widget.time,
                       'FROM-TIME': fromtime,
@@ -348,7 +453,7 @@ class _RideOptionsState extends State<RideOptions> {
                                             alignment: Alignment.center,
                                             children: [
                                               InkWell(
-                                                  child: Lottie.asset(
+                                                  child: lottie.Lottie.asset(
                                                       "assets/searching.json"),
                                                   splashColor:
                                                       Colors.transparent,

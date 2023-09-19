@@ -24,6 +24,8 @@ class TripDetails extends StatefulWidget {
   final String returntime;
   final String adult;
   final String child;
+  final String dist;
+  final String est;
   const TripDetails(
       {super.key,
       required this.from,
@@ -35,7 +37,7 @@ class TripDetails extends StatefulWidget {
       required this.returndate,
       required this.returntime,
       required this.adult,
-      required this.child});
+      required this.child, required this.dist, required this.est});
 
   @override
   State<TripDetails> createState() => _TripDetailsState();
@@ -56,7 +58,6 @@ class _TripDetailsState extends State<TripDetails> {
   @override
   void initState() {
     super.initState();
-    String est = '24';
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -313,15 +314,17 @@ class _TripDetailsState extends State<TripDetails> {
                           ],
                         ),
                       ),
-                      Flexible(
-                          child: Text(
+                      Expanded(child:
+                      Text(
                         widget.from,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontFamily: 'Arimo',
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12),
-                      )),
+                        fontFamily: 'Arimo',
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12),
+                      ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -351,9 +354,10 @@ class _TripDetailsState extends State<TripDetails> {
                           ],
                         ),
                       ),
-                      Flexible(
+                      Expanded(
                         child: Text(
                           widget.to,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontFamily: 'Arimo',
                               color: Colors.grey,
@@ -490,7 +494,7 @@ class _TripDetailsState extends State<TripDetails> {
                         fontFamily: 'Arimo', color: Colors.grey, fontSize: 13),
                   ),
                   Text(
-                    '24 min',
+                    widget.est,
                     style: TextStyle(
                         fontFamily: 'Arimo',
                         color: Color.fromRGBO(255, 51, 51, 0.8),
@@ -552,13 +556,13 @@ class _TripDetailsState extends State<TripDetails> {
     double fare = 0;
     if (widget.vec == 'Sedan') {
       fare = 200 +
-          (10.37 * (double.parse(widget.adult)) +
-              10.37 * (double.parse(widget.child)));
+          (double.parse(widget.dist)  * (double.parse(widget.adult)) +
+              (double.parse(widget.dist)  * (double.parse(widget.child)))/2);
     } else {
       fare = 400 +
-          (10.37 * (double.parse(widget.adult)) +
-              10.37 * (double.parse(widget.child)));
+          (double.parse(widget.dist)  * (double.parse(widget.adult)) +
+              (double.parse(widget.dist)  * (double.parse(widget.child)))/2);
     }
-    return fare.toString();
+    return fare.toStringAsFixed(2);
   }
 }

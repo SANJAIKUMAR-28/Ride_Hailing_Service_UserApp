@@ -23,6 +23,7 @@ class _LocationSelectorState extends State<LocationSelector> {
   LatLng? endLocation;
   String routeDistance='';
   String routeDuration='';
+  bool currentLocationMaker= true;
   LocationData? currentLocation;
   final MapController _mapController = MapController();
   final TextEditingController _startController = TextEditingController();
@@ -182,16 +183,15 @@ class _LocationSelectorState extends State<LocationSelector> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Stack(
+      body:  currentLocation != null
+          ? Stack(
           children: [
             FlutterMap(
               options: MapOptions(
-                center: currentLocation != null
-                    ? LatLng(
+                center:LatLng(
                   currentLocation!.latitude!,
                   currentLocation!.longitude!,
-                )
-                    : LatLng(11.504776, 77.238396),
+                ),
                 zoom: 13.0,
               ),
               mapController: _mapController,
@@ -243,7 +243,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                       ),
                     ],
                   ),
-                if (currentLocation != null)
+                if (currentLocation != null && currentLocationMaker)
                   MarkerLayer(
                     markers: [
                       Marker(
@@ -301,7 +301,8 @@ class _LocationSelectorState extends State<LocationSelector> {
                                 },
                                 itemBuilder: (context, suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo')),
+                                    visualDensity: VisualDensity(horizontal: 0,vertical: -4),
+                                    title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo',fontSize: 12)),
                                   );
                                 },
                                 onSuggestionSelected: (suggestion) async {
@@ -328,6 +329,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                                         currentLocation!.longitude!);
                                     _startController.text = "Current Location";
                                   });
+                                  currentLocationMaker=false;
                                 }
                               },
                             ),
@@ -366,7 +368,8 @@ class _LocationSelectorState extends State<LocationSelector> {
                                 },
                                 itemBuilder: (context, suggestion) {
                                   return ListTile(
-                                    title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo'),),
+                                    visualDensity: VisualDensity(horizontal: 0,vertical: -4),
+                                    title: Text(suggestion.toString(),style: TextStyle(fontFamily: 'Arimo',fontSize: 12),),
                                   );
                                 },
                                 onSuggestionSelected: (suggestion) async {
@@ -402,6 +405,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                                     _destinationController.text =
                                     "Current Location";
                                   });
+                                  currentLocationMaker=false;
                                 }
                               },
                             ),
@@ -411,7 +415,7 @@ class _LocationSelectorState extends State<LocationSelector> {
                     ),
                     SizedBox(height: 10,),
                     if(routeDistance!='')
-                    Text('Distance : $routeDistance \nEstimated time : $routeDuration',style: TextStyle(fontFamily: 'Arimo',),)
+                    Text('Distance : $routeDistance km \nEstimated time : $routeDuration',style: TextStyle(fontFamily: 'Arimo',),)
                   ]
               ),
             ),
@@ -448,7 +452,14 @@ class _LocationSelectorState extends State<LocationSelector> {
               ),
             ),)
           ]
-      ),
+      ):Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(color: Colors.redAccent,),
+          SizedBox(height: 10,),
+          Text('Fetching current location...Please wait',style: TextStyle(fontFamily: 'Arimo',color: Colors.grey[500]),)
+        ],
+      )),
     );
   }
 }

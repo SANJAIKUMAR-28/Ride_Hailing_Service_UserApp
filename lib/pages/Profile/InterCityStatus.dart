@@ -14,12 +14,18 @@ class InterCityStatus extends StatefulWidget {
 }
 
 class _InterCityStatusState extends State<InterCityStatus> {
+  bool intercity=true;
+  bool dailies=false;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   db.Query dbRef =
       db.FirebaseDatabase.instance.ref().child('IntercityRequests');
   db.DatabaseReference reference =
       db.FirebaseDatabase.instance.ref().child('IntercityRequests');
+  db.Query dbRef1 =
+  db.FirebaseDatabase.instance.ref().child('DailiesRequests');
+  db.DatabaseReference reference1 =
+  db.FirebaseDatabase.instance.ref().child('DailiesRequests');
   @override
   void initState() {
     super.initState();
@@ -63,9 +69,14 @@ class _InterCityStatusState extends State<InterCityStatus> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text(
-          'Status',
-          style: TextStyle(fontFamily: 'Arimo', fontWeight: FontWeight.bold),
+        title: Column(
+          children: [
+            const Text(
+              'Status',
+              style: TextStyle(fontFamily: 'Arimo', fontWeight: FontWeight.bold),
+            ),
+
+          ],
         ),
         centerTitle: true,
         toolbarHeight: 50,
@@ -73,16 +84,86 @@ class _InterCityStatusState extends State<InterCityStatus> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
-      body: FirebaseAnimatedList(
-        query: dbRef,
-        itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
-            Animation<double> animation, int index) {
-          Map request = snapshot.value as Map;
-          request['key'] = snapshot.key;
+      body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                child: Material(
+                  color: Color.fromRGBO(255, 245, 245, 1.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        color: Colors.transparent,
+                        width: (MediaQuery.of(context).size.width)/2,
+                        child: Material(
+                          color: Color.fromRGBO(255, 245, 245, 1.0),
+                          child: MaterialButton(
+                            splashColor: Colors.transparent,
+                              onPressed: () {
+                                setState(() {
+                                  intercity=!intercity;
+                                  dailies=!dailies;
+                                });
+                              },
+                              child: Text('InterCity',textAlign: TextAlign.center,style: TextStyle(fontFamily: 'Arimo',color: (intercity)?Colors.redAccent:Colors.black),)),
+                        ),
+                      ),
+                      Container(
+                        color: Colors.transparent,
+                        width: (MediaQuery.of(context).size.width)/2,
+                        child: Material(
+                          color: Color.fromRGBO(255, 245, 245, 1.0),
+                          child: MaterialButton(
+                            splashColor: Colors.transparent,
+                              onPressed: () {
+                              setState(() {
+                                dailies=!dailies;
+                                intercity=!intercity;
+                              });
+                              },
+                              child: Text('Dailies',textAlign: TextAlign.center,style: TextStyle(fontFamily: 'Arimo',color: (dailies)?Colors.redAccent:Colors.black),)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              (intercity)?
+              Container(
+                height: MediaQuery.of(context).size.height,
+                child: FirebaseAnimatedList(
+                  query: dbRef,
+                  itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
+                      Animation<double> animation, int index) {
+                    Map request = snapshot.value as Map;
+                    request['key'] = snapshot.key;
 
-          return listItem(request: request);
-        },
-      ),
+                    return listItem(request: request);
+                  },
+                ),
+              ): Container(
+                height: MediaQuery.of(context).size.height,
+                child: FirebaseAnimatedList(
+                  query: dbRef1,
+                  itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
+                      Animation<double> animation, int index) {
+                    Map request = snapshot.value as Map;
+                    request['key'] = snapshot.key;
+                    if(!snapshot.exists){
+                      return Text('No bookings!!',style: TextStyle(fontFamily: 'Arimo'),);
+                    }
+                    else {
+                      return listItem(request: request);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
     );
   }
 
