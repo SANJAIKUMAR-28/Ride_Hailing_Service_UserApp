@@ -251,7 +251,7 @@ checksts();
     Timer(Duration(seconds: 1), () async
     {
       if(sts=="ARRIVED"){
-        showDialog(context: context, builder: (context) {
+        showDialog(barrierDismissible:false,context: context, builder: (context) {
           return AlertDialog(
               surfaceTintColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

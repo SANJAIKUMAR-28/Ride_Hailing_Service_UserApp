@@ -64,7 +64,7 @@ class _SelectOptionState extends State<SelectOption> {
                                 builder: (context) => MobileLogin()));
                       },
                       child: Text(
-                        "Login in with mobile no",
+                        "Login with mobile no",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 15,

@@ -1,55 +1,36 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:lottie/lottie.dart';
-import 'package:velocito/pages/HomePage.dart';
-import 'package:velocito/pages/HomeScreen.dart';
 
 import '../../../Models/user_model.dart';
-import '../Ride/DriverDetails.dart';
+import '../../HomeScreen.dart';
 
-class TripDetails extends StatefulWidget {
+class DailiesDetails extends StatefulWidget {
   final String from;
   final String to;
-  final String trip;
-  final String vec;
-  final String deptdate;
-  final String depttime;
-  final String returndate;
-  final String returntime;
-  final String adult;
-  final String child;
+  final String fromdate;
+  final String pickuptime;
+  final String todatedate;
+  final String repickuptime;
+  final String totaldays;
   final String dist;
   final String est;
-  const TripDetails(
-      {super.key,
-      required this.from,
-      required this.to,
-      required this.trip,
-      required this.vec,
-      required this.deptdate,
-      required this.depttime,
-      required this.returndate,
-      required this.returntime,
-      required this.adult,
-      required this.child, required this.dist, required this.est});
+  const DailiesDetails({super.key, required this.from, required this.to, required this.fromdate, required this.pickuptime, required this.todatedate, required this.repickuptime, required this.dist, required this.est, required this.totaldays});
 
   @override
-  State<TripDetails> createState() => _TripDetailsState();
+  State<DailiesDetails> createState() => _DailiesDetailsState();
 }
 
-class _TripDetailsState extends State<TripDetails> {
+class _DailiesDetailsState extends State<DailiesDetails> {
   DatabaseReference dbRef =
-      FirebaseDatabase.instance.ref().child('IntercityRequests');
+  FirebaseDatabase.instance.ref().child('DailiesRequests');
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   final CollectionReference ref =
-      FirebaseFirestore.instance.collection("users");
+  FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
   String? sts;
   late String date;
@@ -171,9 +152,7 @@ class _TripDetailsState extends State<TripDetails> {
                                   width: 10,
                                 ),
                                 Image.asset(
-                                  (widget.vec == "Sedan")
-                                      ? "assets/taxi4.png"
-                                      : "assets/taxi7.png",
+                                  "assets/taxi4.png",
                                   height: 50,
                                   width: 80,
                                 ),
@@ -213,7 +192,7 @@ class _TripDetailsState extends State<TripDetails> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '${widget.vec}',
+                              'Sedan',
                               style: TextStyle(
                                 fontFamily: 'Arimo',
                               ),
@@ -233,19 +212,12 @@ class _TripDetailsState extends State<TripDetails> {
                                 SizedBox(
                                   width: 5,
                                 ),
-                                (widget.vec == 'Sedan')
-                                    ? Text(
-                                        '4 seats',
-                                        style: TextStyle(
-                                            fontFamily: 'Arimo',
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    : Text(
-                                        '7 seats',
-                                        style: TextStyle(
-                                            fontFamily: 'Arimo',
-                                            fontWeight: FontWeight.bold),
-                                      )
+                                Text(
+                                  '4 seats',
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo',
+                                      fontWeight: FontWeight.bold),
+                                )
                               ],
                             ),
                             Container(
@@ -319,10 +291,10 @@ class _TripDetailsState extends State<TripDetails> {
                         widget.from,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                        fontFamily: 'Arimo',
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12),
+                            fontFamily: 'Arimo',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12),
                       ),
                       )
                     ],
@@ -378,7 +350,7 @@ class _TripDetailsState extends State<TripDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Departure Date & Time',
+                              'From & To date',
                               style: TextStyle(
                                   fontFamily: 'Arimo',
                                   fontWeight: FontWeight.w700,
@@ -395,7 +367,7 @@ class _TripDetailsState extends State<TripDetails> {
                         ),
                       ),
                       Text(
-                        '${widget.deptdate} - ${widget.depttime}',
+                        '${widget.fromdate} - ${widget.todatedate}',
                         style: TextStyle(
                             fontFamily: 'Arimo',
                             color: Colors.grey,
@@ -404,7 +376,6 @@ class _TripDetailsState extends State<TripDetails> {
                       ),
                     ],
                   ),
-                  if (widget.returndate != '')
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -417,10 +388,10 @@ class _TripDetailsState extends State<TripDetails> {
                               width: 160,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Return Date & Time',
+                                    'Pickup & Re-pickup time',
                                     style: TextStyle(
                                         fontFamily: 'Arimo',
                                         fontWeight: FontWeight.w700,
@@ -437,7 +408,7 @@ class _TripDetailsState extends State<TripDetails> {
                               ),
                             ),
                             Text(
-                              '${widget.returndate} - ${widget.returntime}',
+                              '${widget.pickuptime} - ${widget.repickuptime}',
                               style: TextStyle(
                                   fontFamily: 'Arimo',
                                   color: Colors.grey,
@@ -459,7 +430,7 @@ class _TripDetailsState extends State<TripDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Travellers',
+                              'Total days',
                               style: TextStyle(
                                   fontFamily: 'Arimo',
                                   fontWeight: FontWeight.w700,
@@ -476,7 +447,7 @@ class _TripDetailsState extends State<TripDetails> {
                         ),
                       ),
                       Text(
-                        '${widget.adult} Adults ${widget.child} Children',
+                        '${widget.totaldays} Days',
                         style: TextStyle(
                             fontFamily: 'Arimo',
                             color: Colors.grey,
@@ -516,23 +487,20 @@ class _TripDetailsState extends State<TripDetails> {
                     Map<String, String> Requests = {
                       'FROM': widget.from,
                       'TO': widget.to,
-                      'VEHICLE': widget.vec,
-                      'TRIP-TYPE': widget.trip,
                       'COST': cost(),
                       'PASSENGER-NAME': '${loggedInUser.name}',
                       'PASSENGER-NUMBER': '${loggedInUser.phoneno}',
                       'PASSENGER-ID': '${loggedInUser.uid}',
                       'STATUS': 'REQUESTED',
-                      'CHILD': widget.child,
-                      'ADULTS': widget.adult,
-                      'DEPARTURE-TIME': widget.depttime,
-                      'DEPARTURE-DATE': widget.deptdate,
-                      'RETURN-DATE': widget.returndate,
-                      'RETURN-TIME': widget.returntime,
+                      'PICKUP-TIME': widget.pickuptime,
+                      'FROM-DATE': widget.fromdate,
+                      'TO-DATE': widget.todatedate,
+                      'REPICKUP-TIME': widget.repickuptime,
+                      'TOTAL-DAYS':widget.totaldays,
                     };
                     dbRef.push().set(Requests);
                     Fluttertoast.showToast(
-                        msg: "Cab requested, check for status");
+                        msg: "Cab requested, check for status in profile page");
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
@@ -554,15 +522,8 @@ class _TripDetailsState extends State<TripDetails> {
 
   String cost() {
     double fare = 0;
-    if (widget.vec == 'Sedan') {
-      fare = 200 +
-          (double.parse(widget.dist)  * (double.parse(widget.adult)) +
-              (double.parse(widget.dist)  * (double.parse(widget.child)))/2);
-    } else {
-      fare = 400 +
-          (double.parse(widget.dist)  * (double.parse(widget.adult)) +
-              (double.parse(widget.dist)  * (double.parse(widget.child)))/2);
-    }
+      fare = 200 + (double.parse(widget.dist)*2);
+
     return fare.toStringAsFixed(2);
   }
 }

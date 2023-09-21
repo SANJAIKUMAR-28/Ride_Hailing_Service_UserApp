@@ -417,6 +417,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onPressed: () async {
                                   showDialog(
                                       context: context,
+                                      barrierDismissible: false,
                                       builder: (context) {
                                         return AlertDialog(
                                           surfaceTintColor: Colors.transparent,

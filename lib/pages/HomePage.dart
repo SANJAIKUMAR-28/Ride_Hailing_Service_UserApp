@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:velocito/LoginSignup/MobileLogin.dart';
+import 'package:velocito/pages/BookingProcess/Dailies/Dailies.dart';
 import 'package:velocito/pages/BookingProcess/Intercity/InterCity.dart';
 import 'package:velocito/pages/BookingProcess/LocationSelector.dart';
 
@@ -290,6 +291,13 @@ class _HomePageState extends State<HomePage> {
                       InkWell(
                         highlightColor: Colors.transparent,
                         splashColor: Colors.transparent,
+                        onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Dailies()));
+                        },
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
                           color: Color.fromRGBO(255, 245, 245, 1),

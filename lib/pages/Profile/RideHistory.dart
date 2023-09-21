@@ -69,6 +69,9 @@ class _RideHistoryState extends State<RideHistory> {
         itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
             Animation<double> animation, int index) {
           Map request = snapshot.value as Map;
+          if(request.isEmpty){
+            print('Empty');
+          }
           request['key'] = snapshot.key;
 
           return listItem(request: request);
