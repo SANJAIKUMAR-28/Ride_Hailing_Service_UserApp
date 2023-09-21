@@ -527,8 +527,15 @@ class _TripDetailsState extends State<TripDetails> {
                       'ADULTS': widget.adult,
                       'DEPARTURE-TIME': widget.depttime,
                       'DEPARTURE-DATE': widget.deptdate,
+                      'DISTANCE':'${widget.dist} km',
+                      'ESTIMATED-TRAVEL':widget.est,
                       'RETURN-DATE': widget.returndate,
                       'RETURN-TIME': widget.returntime,
+                      'DRIVER-NAME':'',
+                      'DRIVER-NUMBER':'',
+                      'VEHICLE-TYPE':'',
+                      'VEHICLE-MAKE':'',
+                      'VEHICLE-NMUMBER':'',
                     };
                     dbRef.push().set(Requests);
                     Fluttertoast.showToast(
@@ -555,13 +562,18 @@ class _TripDetailsState extends State<TripDetails> {
   String cost() {
     double fare = 0;
     if (widget.vec == 'Sedan') {
-      fare = 200 +
-          (double.parse(widget.dist)  * (double.parse(widget.adult)) +
-              (double.parse(widget.dist)  * (double.parse(widget.child)))/2);
+
+        fare = 200 +
+            (double.parse(widget.dist) * (double.parse(widget.adult)) +
+                (double.parse(widget.dist) * (double.parse(widget.child))) / 2);
+        if(widget.trip!='One-way')
+          fare=fare*2;
     } else {
       fare = 400 +
           (double.parse(widget.dist)  * (double.parse(widget.adult)) +
               (double.parse(widget.dist)  * (double.parse(widget.child)))/2);
+      if(widget.trip!='One-way')
+        fare=fare*2;
     }
     return fare.toStringAsFixed(2);
   }

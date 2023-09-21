@@ -26,12 +26,12 @@ class _DriverDetailsState extends State<DriverDetails> {
       FirebaseFirestore.instance.collection("users");
   late DatabaseReference _userRef;
   String name = '';
-  String? phn;
-  String? from;
-  String? to;
-  String? fromtime;
-  String? totime;
-  String? cost;
+  String phn='';
+  String from='';
+  String to='';
+  String fromtime='';
+  String totime='';
+  String cost='';
   String type = '';
   String make = '';
   String num = '';
@@ -194,7 +194,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                               child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  Image.asset('assets/successful.png',height: 100,width: 100,),
+                                                  Image.asset('assets/successful.png',height: 80,width: 80,),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -290,7 +290,7 @@ class _DriverDetailsState extends State<DriverDetails> {
                                   child: InkWell(
                                     onTap: () async {
                                       await FlutterPhoneDirectCaller.callNumber(
-                                          phn!);
+                                          phn);
                                     },
                                     child: Icon(
                                       LineIcons.phoneVolume,

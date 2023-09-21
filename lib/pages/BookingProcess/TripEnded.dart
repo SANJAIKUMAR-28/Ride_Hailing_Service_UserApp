@@ -57,7 +57,6 @@ class _TripEndedState extends State<TripEnded> {
           driver = data['DRIVER-NAME'];
           driverphn = data['DRIVER-NUMBER'];
           vec = data['VEHICLE'];
-          dist = data['DISTANCE'];
           seats = data['SEATS'];
           time = data['TIME'];
           fromtime = data['FROM-TIME'];
@@ -209,7 +208,7 @@ class _TripEndedState extends State<TripEnded> {
                                               width: 2,
                                             ),
                                             Text(
-                                              '106.98',
+                                              cost!,
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontFamily: 'Arimo',
@@ -257,7 +256,6 @@ class _TripEndedState extends State<TripEnded> {
                         'PASSENGER-NAME': '${loggedInUser.name}',
                         'PASSENGER-NUMBER': '${loggedInUser.phoneno}',
                         'STATUS': 'COMPLETED',
-                        'DISTANCE': dist!,
                         'SEATS': seats!,
                         'TIME': time!,
                         'DRIVER-ID': driverid!,
@@ -368,15 +366,21 @@ class _TripEndedState extends State<TripEnded> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                from!,
-                                style: TextStyle(
-                                    fontFamily: 'Arimo', color: Colors.grey),
+                              Expanded(
+                                child: Text(
+                                  from!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo', color: Colors.grey),
+                                ),
                               ),
-                              Text(
-                                to!,
-                                style: TextStyle(
-                                    fontFamily: 'Arimo', color: Colors.grey),
+                              Expanded(
+                                child: Text(
+                                  to!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo', color: Colors.grey),
+                                ),
                               ),
                             ],
                           ),

@@ -223,15 +223,21 @@ checksts();
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                from,
-                                style: TextStyle(
-                                    fontFamily: 'Arimo', color: Colors.grey),
+                              Expanded(
+                                child: Text(
+                                  from,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo', color: Colors.grey),
+                                ),
                               ),
-                              Text(
-                                to,
-                                style: TextStyle(
-                                    fontFamily: 'Arimo', color: Colors.grey),
+                              Expanded(
+                                child: Text(
+                                  to,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontFamily: 'Arimo', color: Colors.grey),
+                                ),
                               ),
                             ],
                           ),
