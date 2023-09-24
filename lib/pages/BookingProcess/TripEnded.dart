@@ -21,20 +21,20 @@ class _TripEndedState extends State<TripEnded> {
       FirebaseFirestore.instance.collection("users");
   DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Requests');
   DatabaseReference dbRef1 = FirebaseDatabase.instance.ref().child('History');
-  String? from;
-  String? to;
-  String? cost;
-  String? driver;
-  String? driverphn;
-  String? vec;
-  String? dist;
-  String? seats;
-  String? time;
-  String? fromtime;
-  String? totime;
-  String? date;
-  String? driverid;
-  String? payment;
+  String from='';
+  String to='';
+  String cost='';
+  String driver='';
+  String driverphn='';
+  String vec='';
+  String dist='';
+  String seats='';
+  String time='';
+  String fromtime='';
+  String totime='';
+  String date='';
+  String driverid='';
+  String payment='';
   @override
   void initState() {
     super.initState();

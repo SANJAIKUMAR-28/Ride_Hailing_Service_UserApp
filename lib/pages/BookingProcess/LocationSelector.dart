@@ -273,10 +273,10 @@ class _LocationSelectorState extends State<LocationSelector> {
                     Card(
                       elevation: 4,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        padding: const EdgeInsets.fromLTRB(15, 0, 12, 0),
                         child: Row(
                           children: [
                             Expanded(
@@ -287,8 +287,8 @@ class _LocationSelectorState extends State<LocationSelector> {
                                   decoration:
                                   const InputDecoration(
                                     border: InputBorder.none,
-                                      hintText:'From' ,
-                                      hintStyle:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w500) ,
+                                      labelText:'From' ,
+                                      labelStyle:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w500) ,
                                       ),
                                 ),
                                 suggestionsCallback: (pattern) async {
@@ -341,10 +341,10 @@ class _LocationSelectorState extends State<LocationSelector> {
                     Card(
                       elevation: 4,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
-                        padding:const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        padding:const EdgeInsets.fromLTRB(15, 0, 12, 0),
                         child: Row(
                           children: [
                             Expanded(
@@ -355,8 +355,8 @@ class _LocationSelectorState extends State<LocationSelector> {
                                   decoration:
                                   const InputDecoration(
                                     border: InputBorder.none,
-                                    hintText:'To' ,
-                                    hintStyle:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w500) ,),
+                                    labelText:'To' ,
+                                    labelStyle:TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.w500) ,),
                                 ),
                                 suggestionsCallback: (pattern) async {
                                   if (pattern.isNotEmpty) {
@@ -413,12 +413,39 @@ class _LocationSelectorState extends State<LocationSelector> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10,),
-                    if(routeDistance!='')
-                    Text('Distance : $routeDistance km \nEstimated time : $routeDuration',style: TextStyle(fontFamily: 'Arimo',),)
                   ]
               ),
             ),
+            if(routeDuration!='')
+            Positioned(
+                bottom: 100,
+                left: 20,
+                child: Card(
+                  elevation: 1,
+              child:Padding(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(LineIcons.road,color: Colors.redAccent,),
+                        SizedBox(width: 5,),
+                        Text('Distance : $routeDistance km',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold),)
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Row(
+                      children: [
+                        Icon(LineIcons.clock,color: Colors.redAccent,),
+                        SizedBox(width: 5,),
+                        Text('Est. time : $routeDuration',style: TextStyle(fontFamily: 'Arimo',fontWeight: FontWeight.bold),)
+                      ],
+                    )
+                  ],
+                ),
+              ) ,
+            )),
             Positioned(
               bottom: 30,
               right: 20,

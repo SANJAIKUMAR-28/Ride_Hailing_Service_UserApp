@@ -418,8 +418,10 @@ class _RideOptionsState extends State<RideOptions> {
                     Map<String, String> Requests = {
                       'FROM': widget.from,
                       'TO': widget.to,
-                      'FROM-LATLON':'${widget.fromlatlon}',
-                      'TO-LATLON':'${widget.tolatlon}',
+                      'FROM-LAT':'${widget.fromlatlon.latitude}',
+                      'FROM-LON':'${widget.fromlatlon.longitude}',
+                      'TO-LAT':'${widget.tolatlon.latitude}',
+                      'TO-LON':'${widget.fromlatlon.longitude}',
                       'VEHICLE': widget.vec,
                       'COST': widget.cost,
                       'PASSENGER-NAME': '${loggedInUser.name}',
@@ -432,6 +434,7 @@ class _RideOptionsState extends State<RideOptions> {
                       'FROM-TIME': fromtime,
                       'TO-TIME': totime,
                       'DATE': date,
+                      'value':'1',
                     };
                     dbRef.child('${loggedInUser.uid}').set(Requests);
 

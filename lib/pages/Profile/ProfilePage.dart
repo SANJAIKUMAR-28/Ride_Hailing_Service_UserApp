@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' as st;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,6 +38,29 @@ class _ProfilePageState extends State<ProfilePage> {
       this.loggedInUser = UserModel.fromMap(value.data());
       setState(() {});
     });
+  }
+  Future<void> _showNotification() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'your_channel_id', // Replace with your channel ID
+      'Your Channel Name', // Replace with your channel name
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      'Title', // Notification title
+      'Body', // Notification body
+      platformChannelSpecifics,
+    );
   }
   void makePayment() async {
     try {
@@ -204,7 +229,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: MaterialButton(
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
-                                onPressed: () {},
+                                onPressed: () async {
+                                  await FlutterPhoneDirectCaller.callNumber('9791745466');
+                                },
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -216,7 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         backgroundColor:
                                             Color.fromRGBO(255, 51, 51, 0.03),
                                         child: Icon(
-                                          LineIcons.creditCard,
+                                          LineIcons.phone,
                                           color:
                                               Color.fromRGBO(255, 51, 51, 0.8),
                                           size: 25,
@@ -232,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'My cards',
+                                            'Book by Call',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w900,
                                                 fontFamily: 'Arimo',
@@ -242,7 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           SizedBox(
                                             height: 3,
                                           ),
-                                          Text('Make changes to your cards',
+                                          Text('Make call to a nearby driver',
                                               style: TextStyle(
                                                   fontFamily: 'Arimo',
                                                   color: Color.fromRGBO(
@@ -257,7 +284,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                         color: Colors.grey,
                                         size: 20,
                                       ),
-                                      onTap: () {},
+                                      onTap: () async {
+
+                                      },
                                     )
                                   ],
                                 ),
@@ -636,7 +665,9 @@ makePayment();
                         child: MaterialButton(
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
-                          onPressed: () {},
+                          onPressed: () {
+                            _showNotification();
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,

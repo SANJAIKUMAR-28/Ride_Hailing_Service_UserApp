@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:velocito/LoginSignup/Login.dart';
 import 'package:velocito/LoginSignup/SelectOption.dart';
@@ -8,10 +9,22 @@ import 'package:velocito/LoginSignup/Signup.dart';
 import 'package:velocito/pages/HomeScreen.dart';
 import 'package:velocito/splash.dart';
 
+import 'Models/firebase_api.dart';
+
 Future<void> main() async {
   Stripe.publishableKey="pk_live_51NZaq9SJqspQ66jdd1aBdHczgKeua9Jc9QOKZRyZUNDx2G6j8dwfLmlgPpvZsRMF4r6FV0uZjhnlsC2OxfuP6Yvm00SWNxnk1s";
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+
+  // Initialize the plugin
+  final AndroidInitializationSettings androidInitializationSettings =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  final InitializationSettings initializationSettings =
+  InitializationSettings(android: androidInitializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await FirebaseApi().initNotifications();
   runApp(const MyApp());
 }
 

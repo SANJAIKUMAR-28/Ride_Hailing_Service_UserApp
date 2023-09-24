@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart' as db;
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../Models/user_model.dart';
 
@@ -17,6 +18,7 @@ class _RideHistoryState extends State<RideHistory> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   db.Query dbRef = db.FirebaseDatabase.instance.ref().child('History');
+  bool show=false;
   db.DatabaseReference reference =
       db.FirebaseDatabase.instance.ref().child('History');
   @override
@@ -28,6 +30,17 @@ class _RideHistoryState extends State<RideHistory> {
         .get()
         .then((value) {
       this.loggedInUser = UserModel.fromMap(value.data());
+    });
+    reference.onValue.listen((event) {
+      final snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        final data = Map<String, dynamic>.from(snapshot.value as dynamic);
+        if (data.isNotEmpty) {
+          setState(() {
+            show=true;
+          });
+        } 
+      }
     });
   }
 
@@ -60,23 +73,30 @@ class _RideHistoryState extends State<RideHistory> {
         ),
         centerTitle: true,
         toolbarHeight: 50,
-        shadowColor: Colors.transparent,
+        shadowColor: Colors.white,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
+        elevation: 1,
       ),
-      body: FirebaseAnimatedList(
-        query: dbRef,
-        itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
-            Animation<double> animation, int index) {
-          Map request = snapshot.value as Map;
-          if(request.isEmpty){
-            print('Empty');
-          }
-          request['key'] = snapshot.key;
+      body: (show)?SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: FirebaseAnimatedList(
+          query: dbRef,
+          itemBuilder: (BuildContext context, db.DataSnapshot snapshot,
+              Animation<double> animation, int index) {
+            Map request = snapshot.value as Map;
+            request['key'] = snapshot.key;
 
-          return listItem(request: request);
-        },
-      ),
+            return listItem(request: request);
+          },
+        ),
+      ):Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset(
+              "assets/nohistory.json",height: 300,width: 300),
+          Text('No history!!',style: TextStyle(fontFamily: 'Arimo',color: Colors.grey[800],fontSize: 19),)
+        ],
+      )),
     );
   }
 
@@ -200,7 +220,7 @@ class _RideHistoryState extends State<RideHistory> {
                             Expanded(
                               child: Text(
                                 to,
-                                overflow: TextOverflow.fade,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontFamily: 'Arimo', color: Colors.grey),
                               ),

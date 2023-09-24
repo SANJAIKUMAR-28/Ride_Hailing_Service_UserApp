@@ -531,11 +531,12 @@ class _TripDetailsState extends State<TripDetails> {
                       'ESTIMATED-TRAVEL':widget.est,
                       'RETURN-DATE': widget.returndate,
                       'RETURN-TIME': widget.returntime,
-                      'DRIVER-NAME':'',
-                      'DRIVER-NUMBER':'',
-                      'VEHICLE-TYPE':'',
-                      'VEHICLE-MAKE':'',
-                      'VEHICLE-NMUMBER':'',
+                      'DRIVER-NAME':' ',
+                      'DRIVER-NUMBER':' ',
+                      'VEHICLE-TYPE':' ',
+                      'VEHICLE-MAKE':' ',
+                      'VEHICLE-NMUMBER':' ',
+                      'NOTIFICATION':'1',
                     };
                     dbRef.push().set(Requests);
                     Fluttertoast.showToast(
