@@ -491,7 +491,7 @@ class _HomePageState extends State<HomePage> {
     String greeting = '';
     DateTime dateTime = DateTime.now();
     String hour = "${dateTime.hour}";
-    if (int.parse(hour) > 0 && int.parse(hour) <= 11) {
+    if (int.parse(hour) >= 0 && int.parse(hour) <= 11) {
       greeting = "Good Morning";
     } else if (int.parse(hour) >= 12 && int.parse(hour) < 16) {
       greeting = "Good Afternoon";

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart' as db;
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_icons/line_icons.dart';
@@ -38,7 +39,29 @@ class _InterCityStatusState extends State<InterCityStatus> {
       this.loggedInUser = UserModel.fromMap(value.data());
     });
   }
+  Future<void> _showNotification(String from,String to) async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'your_channel_id', // Replace with your channel ID
+      'Your Channel Name', // Replace with your channel name
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      'Intercity Status', // Notification title
+      'Your request from has been confirmed.\nHave a Happy Journey :)', // Notification body
+      platformChannelSpecifics,
+    );
+  }
   Widget listItem({required Map request}) {
     return SingleChildScrollView(
       child: Padding(
@@ -61,10 +84,13 @@ class _InterCityStatusState extends State<InterCityStatus> {
                 request['DRIVER-NUMBER'],
                 request['VEHICLE-TYPE'],
                 request['VEHICLE-MAKE'],
-                request['VEHICLE-NUMBER'],
+                request['VEHICLE-NMUMBER'],
                 request['STATUS'],
                 request['key'],
-              )
+              ),
+            if(request['STATUS']=='CONFIRMED'&&request['NOTIFICATION']=='1')
+              checksts(request['FROM'],request['TO'],request['key'])
+
           ],
         ),
       ),
@@ -540,18 +566,23 @@ class _InterCityStatusState extends State<InterCityStatus> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      from,
-                                      overflow: TextOverflow.fade,
-                                      style: TextStyle(
-                                          fontFamily: 'Arimo', color: Colors.grey),
+                                    Expanded(
+                                      child: Text(
+                                        from,
+                                        overflow: TextOverflow.fade,
+                                        style: TextStyle(
+                                            fontFamily: 'Arimo', color: Colors.grey),
+                                      ),
                                     ),
+                                    Expanded(
+                                      child:
                                     Text(
                                       to,
                                       overflow: TextOverflow.fade,
                                       style: TextStyle(
                                           fontFamily: 'Arimo', color: Colors.grey),
                                     ),
+                                    )
                                   ],
                                 ),
                               )),
@@ -985,4 +1016,8 @@ class _InterCityStatusState extends State<InterCityStatus> {
       ),
     );
   }
+checksts(String from,String to,String key){
+    _showNotification(from,to);
+    reference.child(key).update({'NOTIFICATION':'2'});
+}
 }

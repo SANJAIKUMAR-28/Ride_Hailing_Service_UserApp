@@ -57,6 +57,8 @@ dependencies:
   flutter_typeahead: ^4.6.2
   flutter_map: ^5.0.0
   http: ^1.1.0
+  flutter_local_notifications: ^15.1.1
+  firebase_messaging: ^14.6.8
 
 
 dev_dependencies:
@@ -120,6 +122,7 @@ flutter:
     - assets/ind.png
     - assets/marker.png
     - assets/successful.png
+    - assets/nohistory.json
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

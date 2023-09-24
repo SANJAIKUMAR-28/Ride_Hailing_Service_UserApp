@@ -82,7 +82,7 @@ class _RateDriverState extends State<RateDriver> {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: [
-                    Image.asset('assets/map.png')
+                    Image.asset('assets/map.png'),
                   ],
                 ),
               ),
