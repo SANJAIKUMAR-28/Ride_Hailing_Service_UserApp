@@ -1,16 +1,17 @@
-# velocito
+Velocito: Book Your Ride with Speed and Ease
+Velocito is a user-friendly taxi booking application designed to get you where you need to go quickly and conveniently. Built with the user in mind, Velocito offers a seamless experience from booking your ride to reaching your destination.
 
-A new Flutter project.
+Key Features:
 
-## Getting Started
+Effortless Booking: Find and book taxis within minutes using your smartphone.
+Real-time Tracking: Follow your cab's live location on a map, ensuring peace of mind.
+Multiple Payment Options: Pay for your rides securely through various online payment methods.
+Estimated Fares: Get upfront fare estimates before booking to avoid surprises.
+Driver Ratings & Reviews: Choose drivers based on their ratings and reviews for a safe and reliable ride.
+Ride History & Tracking: Easily access your past ride history and manage receipts.
+Technical Stack:
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Frontend: Flutter, Dart
+Backend: Dart
+Database: Firebase DB
+Mapping: Mapbox
